@@ -1,0 +1,18 @@
+# Build output and distribution
+dist/
+bin/
+obj/
+
+# Visual Studio / IDE temporary files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs and runtime databases
+*.log
+*.tmp
+data/
+WebView2Data/

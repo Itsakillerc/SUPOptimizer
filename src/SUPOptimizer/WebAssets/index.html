@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUPOptimizer - Native Windows System Engineering Platform</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script>
+    window.SUP_TOKEN = "{{SUP_TOKEN}}";
+    window.SUP_PORT = "{{SUP_PORT}}";
+  </script>
+</head>
+<body>
+
+  <div class="app-shell">
+
+    <!-- ====================================================================
+         LEFT VERTICAL SIDEBAR
+         ==================================================================== -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon-wrap" title="SUPOptimizer Platform">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#111113" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-titles">
+          <span class="brand-title">SUPOptimizer</span>
+          <span class="brand-badge">v1.0.0</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="dashboard" onclick="supApp.switchTab('dashboard')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-item" data-tab="optimize" onclick="supApp.switchTab('optimize')">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Optimize</span>
+          <span class="nav-badge-pill" id="badge-opt-count">35+</span>
+        </button>
+
+        <button class="nav-item" data-tab="debloat" onclick="supApp.switchTab('debloat')">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"></path></svg>
+          <span>Bloatware</span>
+          <span class="nav-badge-pill" id="badge-debloat-count" style="color:#f59e0b;">30+</span>
+        </button>
+
+        <button class="nav-item" data-tab="startup" onclick="supApp.switchTab('startup')">
+          <svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path></svg>
+          <span>Startup Manager</span>
+        </button>
+
+        <button class="nav-item" data-tab="storage" onclick="supApp.switchTab('storage')">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <span>Disk Cleanup</span>
+        </button>
+
+        <button class="nav-item" data-tab="installer" onclick="supApp.switchTab('installer')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          <span>App Store</span>
+        </button>
+
+        <button class="nav-item" data-tab="network" onclick="supApp.switchTab('network')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span>Network & DNS</span>
+        </button>
+
+        <button class="nav-item" data-tab="systemtools" onclick="supApp.switchTab('systemtools')">
+          <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+          <span>System Tools</span>
+        </button>
+
+        <button class="nav-item" data-tab="repair" onclick="supApp.switchTab('repair')">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <span>Security & Repair</span>
+        </button>
+
+        <button class="nav-item" data-tab="hardware" onclick="supApp.switchTab('hardware')">
+          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+          <span>Hardware Specs</span>
+        </button>
+
+        <button class="nav-item" data-tab="features" onclick="supApp.switchTab('features')">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          <span>Windows Features</span>
+        </button>
+
+        <button class="nav-item" data-tab="profiles" onclick="supApp.switchTab('profiles')">
+          <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          <span>Setup Profiles</span>
+        </button>
+
+        <button class="nav-item" data-tab="unattend" onclick="supApp.switchTab('unattend')">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span>Unattended ISO</span>
+        </button>
+
+        <button class="nav-item" data-tab="backups" onclick="supApp.switchTab('backups')">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+          <span>Backups & History</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="nav-item" data-tab="settings" onclick="supApp.switchTab('settings')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          <span>Settings</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ====================================================================
+         MAIN VIEWPORT WRAPPER
+         ==================================================================== -->
+    <div class="app-content-wrapper">
+
+      <!-- TOP HEADER BAR -->
+      <header class="app-header">
+        <div class="header-left">
+          <div class="nav-arrows">
+            <button class="btn-arrow" onclick="supApp.navigateHistory(-1)" title="Go Back">←</button>
+            <button class="btn-arrow" onclick="supApp.navigateHistory(1)" title="Go Forward">→</button>
+          </div>
+          <span class="header-page-title" id="header-page-title">Dashboard Overview</span>
+        </div>
+
+        <div class="header-center">
+          <div class="telemetry-pill">
+            <span class="pulse-dot"></span>
+            <span class="pill-lbl">CPU</span>
+            <span class="pill-val" id="header-cpu">0.0%</span>
+          </div>
+          <div class="telemetry-pill">
+            <span class="pill-lbl">RAM</span>
+            <span class="pill-val" id="header-ram">0 / 0 GB</span>
+          </div>
+          <div class="telemetry-pill pill-admin" id="header-admin-badge" onclick="supApp.requestElevation()" title="Click to request administrator privileges">
+            <span class="pill-lbl">SECURITY</span>
+            <span class="pill-val" id="header-admin" style="color:var(--safe-green);">Checking...</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="header-btn" onclick="supApp.openExternalBrowser()" title="Open SUPOptimizer in your default web browser (Chrome, Edge, Brave)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Web View</span>
+          </button>
+
+          <div class="header-search-bar" onclick="supApp.openCommandPalette()" title="Press Ctrl+K to search all tweaks and commands">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Search</span>
+            <span class="search-kbd">Ctrl+K</span>
+          </div>
+
+          <div class="window-ctl-group">
+            <button class="btn-win" onclick="supApp.minimizeToTray()" title="Minimize to System Tray">─</button>
+            <button class="btn-win" id="btn-win-max" onclick="supApp.toggleMaximize()" title="Maximize / Restore">▢</button>
+            <button class="btn-win btn-win-close" onclick="supApp.closeWindow()" title="Close SUPOptimizer">✕</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- VIEWPORT SCROLLABLE CONTENT -->
+      <main class="app-viewport">
+
+        <!-- ==============================================================
+             1. DASHBOARD PANE
+             ============================================================== -->
+        <div class="tab-pane active" id="tab-dashboard">
+          <div class="hero-boost-banner">
+            <div class="hero-boost-text">
+              <h2>Windows System Performance Center</h2>
+              <p>One-click system optimization: reduce background latency, disable telemetry trackers, reclaim disk capacity, and configure native low-overhead scheduling.</p>
+            </div>
+            <button class="btn-primary-amber" onclick="supApp.openSafeBoostModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>1-Click Safe Boost</span>
+            </button>
+          </div>
+
+          <div class="stats-grid-4">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">CPU Utilization</span>
+                <span class="pill-risk safe" id="dash-cpu-val">0%</span>
+              </div>
+              <div class="stat-gauge-track"><div class="stat-gauge-bar green" id="dash-cpu-bar" style="width:0%;"></div></div>
+              <div class="stat-subtext" id="dash-cpu-model">Loading CPU specifications...</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Memory Working Set</span>
+                <span class="pill-risk caution" id="dash-ram-val">0%</span>
+              </div>
+              <div class="stat-gauge-track"><div class="stat-gauge-bar" id="dash-ram-bar" style="width:0%;"></div></div>
+              <div class="stat-subtext" id="dash-ram-detail">Initializing RAM memory...</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title" id="dash-disk-title">System Drive (C:)</span>
+                <span class="pill-risk safe" id="dash-disk-val">0%</span>
+              </div>
+              <div class="stat-gauge-track"><div class="stat-gauge-bar green" id="dash-disk-bar" style="width:0%;"></div></div>
+              <div class="stat-subtext" id="dash-disk-detail">Scanning drive capacity...</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Active Security State</span>
+                <span class="pill-risk safe" id="dash-health-badge">Healthy</span>
+              </div>
+              <div class="stat-gauge-track"><div class="stat-gauge-bar green" style="width:100%;"></div></div>
+              <div class="stat-subtext" id="dash-uptime">Uptime: Calculating...</div>
+            </div>
+          </div>
+
+          <!-- Multi-Disk Storage Volumes Container -->
+          <div style="margin-top:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <h3 style="font-size:14px; font-weight:700; color:#ffffff; display:flex; align-items:center; gap:8px;">
+                <span>💾</span> <span>Storage Drives & Detected Volumes</span>
+              </h3>
+              <span id="dash-disks-count" class="pill-risk safe">Scanning drives...</span>
+            </div>
+            <div class="disks-grid" id="dash-disks-grid">
+              <!-- Dynamically populated multi-disk cards -->
+            </div>
+          </div>
+
+          <!-- Quick System Baseline Info Table -->
+          <div class="table-panel" style="margin-top:20px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>System Component</th>
+                  <th>Hardware Specification / Baseline</th>
+                  <th>Health Status</th>
+                </tr>
+              </thead>
+              <tbody id="dash-specs-tbody">
+                <tr><td>Operating System</td><td id="dash-spec-os">Microsoft Windows 11 / 10</td><td><span class="pill-risk safe">Active</span></td></tr>
+                <tr><td>Central Processing Unit</td><td id="dash-spec-cpu">Detecting CPU architecture...</td><td><span class="pill-risk safe">Optimal</span></td></tr>
+                <tr><td>Dedicated Graphics</td><td id="dash-spec-gpu">Detecting Graphics Adapter...</td><td><span class="pill-risk safe">DirectX 12</span></td></tr>
+                <tr><td>Motherboard & BIOS</td><td id="dash-spec-mb">Detecting Motherboard...</td><td><span class="pill-risk safe">UEFI Secure</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             2. OPTIMIZE PANE (2-Column Tweak Cards & Golden Sub-Tabs)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-optimize">
+          <!-- Horizontal Category Sub-Tabs with Golden Amber Underline -->
+          <div class="subtabs-container">
+            <button class="subtab-item active" onclick="supApp.filterOptimizeTab('All', this)">All Tweaks</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Performance', this)">Performance</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Security', this)">Security & Privacy</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Gaming', this)">GPU & Latency</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Power', this)">Power Management</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Services', this)">Bloatware & Services</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Explorer', this)">User Experience</button>
+            <button class="subtab-item" onclick="supApp.filterOptimizeTab('Advanced', this)">System & Advanced</button>
+          </div>
+
+          <!-- Search & Filter Bar -->
+          <div class="toolbar-row">
+            <div class="toolbar-left">
+              <div class="search-box-wrap">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="tweak-search-input" class="search-input-field" placeholder="Search tweaks, registry keys, features..." oninput="supApp.renderOptimizeGrid()">
+              </div>
+
+              <select id="tweak-risk-filter" class="select-filter" onchange="supApp.renderOptimizeGrid()">
+                <option value="All">Risk: All Levels</option>
+                <option value="Safe">Safe Only (Recommended)</option>
+                <option value="Low">Low Risk</option>
+                <option value="Caution">Caution / Medium</option>
+              </select>
+
+              <select id="tweak-state-filter" class="select-filter" onchange="supApp.renderOptimizeGrid()">
+                <option value="All">State: All</option>
+                <option value="Enabled">Enabled Only</option>
+                <option value="Disabled">Disabled Only</option>
+              </select>
+            </div>
+
+            <div class="toolbar-right">
+              <button class="btn-primary-amber" onclick="supApp.applyAllSafeTweaks()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>Apply Safe Tweaks</span>
+              </button>
+              <button class="btn-secondary" onclick="supApp.restoreAllTweaks()">
+                <span>Restore Defaults</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2-Column Tweak Cards Grid -->
+          <div class="tweak-grid-2col" id="optimize-tweak-grid">
+            <!-- Dynamically populated with optimizerDuck 2-column cards -->
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             3. BLOATWARE PANE (Fixed & Enhanced UWP Debloater)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-debloat">
+          <div class="hero-boost-banner" style="margin-bottom:18px;">
+            <div class="hero-boost-text">
+              <h2>Windows UWP App & Telemetry Debloater</h2>
+              <p>Safely purge pre-installed bloatware, telemetry publishers, background Xbox app overlays, and promotional consumer tiles to reclaim RAM and CPU cycles.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-primary-amber" onclick="supApp.removeRecommendedBloat()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path></svg>
+                <span>Remove Safe Bloatware</span>
+              </button>
+              <button class="btn-secondary" onclick="supApp.loadDebloat()">
+                <span>Refresh Catalog</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Debloat Categories & Multi-Select Toolbar -->
+          <div class="toolbar-row" style="margin-bottom:12px;">
+            <div class="toolbar-left" style="gap:8px; flex-wrap:wrap;">
+              <span style="font-size:12px; color:var(--text-muted); margin-right:4px;">Presets:</span>
+              <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.applyDebloatPreset('safe')">Safe</button>
+              <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.applyDebloatPreset('minimal')">Minimal</button>
+              <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.applyDebloatPreset('aggressive')">Aggressive</button>
+              <div style="height:18px; width:1px; background:var(--border-subtle); margin:0 4px;"></div>
+              <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.selectAllDebloat(true)">Select All</button>
+              <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.selectAllDebloat(false)">Clear</button>
+              <button class="btn-primary-amber" id="btn-remove-selected" style="padding:4px 12px; font-size:11px; display:none;" onclick="supApp.removeSelectedBloat()">
+                Remove Selected (<span id="selected-debloat-count">0</span>)
+              </button>
+            </div>
+            <div class="toolbar-right" style="gap:8px;">
+              <button class="btn-secondary" style="padding:5px 12px; font-size:11px; border-color:rgba(239, 68, 68, 0.4); color:#fca5a5;" onclick="supApp.removeOneDrive()" title="Uninstall Microsoft OneDrive and remove sync registry hooks">
+                Purge OneDrive
+              </button>
+              <button class="btn-secondary" style="padding:5px 12px; font-size:11px; border-color:rgba(239, 68, 68, 0.4); color:#fca5a5;" onclick="supApp.removeMicrosoftEdge()" title="Deep-uninstall Microsoft Edge browser and block reinstallation">
+                Purge Edge
+              </button>
+            </div>
+          </div>
+
+          <!-- Debloat Categories Sub-Tabs -->
+          <div class="subtabs-container">
+            <button class="subtab-item active" onclick="supApp.filterDebloatTab('All', this)">All Bloatware Packages</button>
+            <button class="subtab-item" onclick="supApp.filterDebloatTab('Safe', this)">Safe to Remove</button>
+            <button class="subtab-item" onclick="supApp.filterDebloatTab('Telemetry', this)">Telemetry & Bing</button>
+            <button class="subtab-item" onclick="supApp.filterDebloatTab('Gaming', this)">Gaming & Xbox</button>
+            <button class="subtab-item" onclick="supApp.filterDebloatTab('Apps', this)">Pre-installed Apps</button>
+          </div>
+
+          <!-- 2-Column Debloat Cards Grid -->
+          <div class="tweak-grid-2col" id="debloat-list">
+            <!-- Populated dynamically with 30+ packages -->
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             4. STARTUP MANAGER PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-startup">
+          <div class="toolbar-row">
+            <div class="toolbar-left">
+              <span style="font-size:15px; font-weight:700;">Windows Startup Applications</span>
+            </div>
+            <div class="toolbar-right">
+              <button class="btn-secondary" onclick="supApp.loadStartup()">Refresh Items</button>
+            </div>
+          </div>
+
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Application Name</th>
+                    <th>Target Binary Path</th>
+                    <th>Startup Hive</th>
+                    <th>Impact</th>
+                    <th>Status & Action</th>
+                  </tr>
+                </thead>
+                <tbody id="startup-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             5. DISK CLEANUP PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-storage">
+          <div class="hero-boost-banner">
+            <div class="hero-boost-text">
+              <h2>Disk Cleaner & Junk File Removal</h2>
+              <p>Scan and eliminate gigabytes of obsolete temporary files, system crash logs, GPU shader caches, Windows Update residue, and recycle bins across all drives.</p>
+            </div>
+            <button class="btn-primary-amber" onclick="supApp.runStorageClean()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Clean Selected Targets</span>
+            </button>
+          </div>
+
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:40px;"><input type="checkbox" id="storage-check-all" checked onchange="supApp.toggleAllStorageChecks(this)"></th>
+                    <th>Cleanup Target</th>
+                    <th>Target Description</th>
+                    <th>Reclaimable Space</th>
+                  </tr>
+                </thead>
+                <tbody id="storage-table-body">
+                  <!-- Dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             6. APP STORE PANE (Winget Package Manager)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-installer">
+          <div class="subtabs-container">
+            <button class="subtab-item active" onclick="supApp.filterInstaller('All', this)">All Applications</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Browsers', this)">Browsers</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Utilities', this)">Utilities & Tools</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Development', this)">Development</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Media', this)">Media & Audio</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Gaming', this)">Gaming Clients</button>
+          </div>
+
+          <div class="tweak-grid-2col" id="installer-grid">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             7. NETWORK & DNS PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-network">
+          <!-- Network Stack Optimizations & Power Saving Banner -->
+          <div class="hero-boost-banner" style="margin-bottom:18px;">
+            <div class="hero-boost-text">
+              <h2>Network Performance & Adapter Power Optimization</h2>
+              <p>Configure kernel TCP/IP stack parameters for lowest packet latency, enable Receive Side Scaling (RSS/RSC), eliminate network packet throttling, and disable network adapter power saving (Green Ethernet / EEE).</p>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              <button class="btn-primary-amber" onclick="supApp.optimizeNetworkStack()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                <span>Optimize Network Stack</span>
+              </button>
+              <button class="btn-secondary" onclick="supApp.toggleNetworkPowerSaving(true)" title="Disable Energy Efficient Ethernet and adapter power saving to prevent jitter and micro-disconnects">
+                <span>Disable NIC Power Saving</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-row">
+            <span style="font-size:16px; font-weight:700;">Quick DNS Switcher</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-secondary" onclick="supApp.runNetworkAction('flush_dns')">Flush DNS Cache</button>
+              <button class="btn-secondary" onclick="supApp.runNetworkAction('reset_winsock')">Reset Winsock</button>
+              <button class="btn-secondary" onclick="supApp.runNetworkAction('reset_tcpip')">Reset TCP/IP</button>
+            </div>
+          </div>
+
+          <!-- DNS Preset Cards Grid -->
+          <div class="dns-grid" id="dns-presets-grid">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Active Network Connections Monitor (NetLimiter-Style Inspector) -->
+          <div style="margin-top:28px;">
+            <div class="toolbar-row" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:15px; font-weight:700; color:#ffffff; display:flex; align-items:center; gap:8px;">
+                  <span>🌐</span> <span>Active Network Connections Monitor (Inbound / Outbound)</span>
+                </h3>
+                <span style="font-size:12px; color:var(--text-secondary);">Real-time read-only inspection of active TCP/UDP sockets with owner process (PID), remote IP endpoints, and socket states.</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <input type="text" id="net-conn-search" class="search-input-field" placeholder="Filter process, IP or port..." oninput="supApp.filterNetworkConnections()" style="max-width:220px;">
+                <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
+                  <input type="checkbox" id="net-conn-autorefresh" onchange="supApp.toggleNetConnAutoRefresh(this)">
+                  <span>Auto (3s)</span>
+                </label>
+                <button class="btn-secondary" onclick="supApp.loadNetworkConnections()">Refresh</button>
+              </div>
+            </div>
+
+            <div class="table-panel">
+              <div class="table-scroll-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width:70px;">PID</th>
+                      <th>Application Process</th>
+                      <th style="width:70px;">Proto</th>
+                      <th>Local Endpoint</th>
+                      <th>Remote Endpoint</th>
+                      <th>State</th>
+                      <th>Direction</th>
+                    </tr>
+                  </thead>
+                  <tbody id="net-connections-tbody">
+                    <tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">Loading active network socket connections...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ping & Latency Tool + Shodan.io Search -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-top:24px;">
+            <!-- Ping Tool -->
+            <div class="stat-card">
+              <h3 style="font-size:14px; font-weight:700; margin-bottom:12px;">Ping Latency Diagnostic</h3>
+              <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <input type="text" id="ping-target-input" class="search-input-field" value="1.1.1.1" placeholder="IP or Hostname (e.g. 1.1.1.1, google.com)">
+                <button class="btn-primary-amber" onclick="supApp.executePing()">Ping</button>
+              </div>
+              <div id="ping-result-box" style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary); padding:10px; background:#121215; border-radius:6px;">
+                Ready to ping.
+              </div>
+            </div>
+
+            <!-- Shodan.io Inspector -->
+            <div class="stat-card">
+              <h3 style="font-size:14px; font-weight:700; margin-bottom:12px;">SHODAN.io Intelligence Inspector</h3>
+              <div style="display:flex; gap:8px; margin-bottom:12px;">
+                <input type="text" id="shodan-target-input" class="search-input-field" placeholder="Target IP or domain...">
+                <button class="btn-secondary" onclick="supApp.executeShodanLookup()">Search IP</button>
+              </div>
+              <div id="shodan-result-box" style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary); padding:10px; background:#121215; border-radius:6px;">
+                Enter an IP address to inspect reverse DNS, open ports, and open in SHODAN.io.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             8. SYSTEM TOOLS PANE (Hosts, Env, Unlocker, Run Aliases, Context Menu)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-systemtools">
+          <div class="subtabs-container">
+            <button class="subtab-item active" onclick="supApp.switchSystemTool('hosts', this)">HOSTS File Editor</button>
+            <button class="subtab-item" onclick="supApp.switchSystemTool('env', this)">Environment Variables</button>
+            <button class="subtab-item" onclick="supApp.switchSystemTool('unlock', this)">File Unlocker</button>
+            <button class="subtab-item" onclick="supApp.switchSystemTool('aliases', this)">Run Dialog Aliases</button>
+            <button class="subtab-item" onclick="supApp.switchSystemTool('contextmenu', this)">Context Menu Tweaks</button>
+          </div>
+
+          <!-- Tool 1: HOSTS Editor -->
+          <div class="systool-subpane" id="tool-hosts">
+            <div class="toolbar-row">
+              <span style="font-size:13px; color:var(--text-secondary);" id="hosts-file-path">Path: C:\Windows\System32\drivers\etc\hosts</span>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn-secondary" onclick="supApp.blockTelemetryInHosts()">Block Windows Telemetry</button>
+                <button class="btn-secondary" onclick="supApp.blockAdobeInHosts()">Block Adobe Tracking</button>
+                <button class="btn-primary-amber" onclick="supApp.saveHostsFile()">Save Changes (Auto-Backup)</button>
+              </div>
+            </div>
+            <textarea id="hosts-textarea" class="code-editor-area" spellcheck="false" placeholder="Loading hosts file..."></textarea>
+          </div>
+
+          <!-- Tool 2: Environment Variables -->
+          <div class="systool-subpane" id="tool-env" style="display:none;">
+            <div class="toolbar-row">
+              <input type="text" id="env-search-input" class="search-input-field" placeholder="Search variables (PATH, TEMP, USERPROFILE)..." oninput="supApp.filterEnvTable()" style="max-width:350px;">
+              <button class="btn-primary-amber" onclick="supApp.openAddEnvModal()">+ Add Variable</button>
+            </div>
+            <div class="table-panel">
+              <div class="table-scroll-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width:220px;">Variable Name</th>
+                      <th style="width:100px;">Scope</th>
+                      <th>Value</th>
+                      <th style="width:110px; text-align:right;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="env-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tool 3: File Unlocker -->
+          <div class="systool-subpane" id="tool-unlock" style="display:none;">
+            <div class="stat-card" style="margin-bottom:18px;">
+              <h3 style="font-size:14px; font-weight:700; margin-bottom:8px;">Windows Restart Manager File Lock Diagnostic</h3>
+              <p style="font-size:12px; color:var(--text-secondary); margin-bottom:14px;">Identifies active file system handles and locks preventing file deletion, renaming, or replacement, with option to terminate the locking process.</p>
+              <div style="display:flex; gap:10px;">
+                <input type="text" id="unlock-file-input" class="search-input-field" placeholder="Full path to file (e.g. C:\Program Files\app\locked.dll)">
+                <button class="btn-primary-amber" onclick="supApp.inspectFileLocks()">Find Locking Handles</button>
+              </div>
+            </div>
+            <div id="unlock-results-box" class="table-panel" style="display:none;">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>PID</th>
+                    <th>Process Name</th>
+                    <th>Application Title</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="unlock-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tool 4: Run Dialog Aliases (App Paths) -->
+          <div class="systool-subpane" id="tool-aliases" style="display:none;">
+            <div class="toolbar-row">
+              <span style="font-size:13px; color:var(--text-secondary);">Customize commands executable directly from the <strong>Win+R</strong> dialog.</span>
+              <button class="btn-primary-amber" onclick="supApp.openAddAliasModal()">+ Add Run Alias</button>
+            </div>
+            <div class="table-panel">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Run Command</th>
+                    <th>Target Application Path</th>
+                    <th>Scope</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="aliases-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tool 5: Context Menu Tweaks -->
+          <div class="systool-subpane" id="tool-contextmenu" style="display:none;">
+            <div class="tweak-grid-2col" id="contextmenu-tweaks-grid">
+              <!-- Dynamically populated with Take Ownership, Open with Notepad, etc. -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             9. SECURITY & REPAIR PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-repair">
+          <div class="toolbar-row">
+            <div>
+              <h2 style="font-size:16px; font-weight:700;">Windows Component Store & Registry Diagnostics</h2>
+              <p style="font-size:12px; color:var(--text-secondary);">Run verified Windows servicing stack repairs, SFC integrity check, DISM image restoration, and registry repair.</p>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:16px;">
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('sfc_scannow')">
+              <strong style="color:#ffffff;">SFC /scannow</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Verify protected system files</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('dism_restorehealth')">
+              <strong style="color:#ffffff;">DISM Restore Health</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Repair component store</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('reset_windows_update')">
+              <strong style="color:#ffffff;">Windows Update Reset</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Reset WU services & cache</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('reset_network_full')">
+              <strong style="color:#ffffff;">Network Stack Reset</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Flush DNS, ARP & Winsock</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('system_corruption_scan')">
+              <strong style="color:#ffffff;">System Corruption Scan</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Deep DISM & SFC repair cycle</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('fix_registry_issues')">
+              <strong style="color:#ffffff;">Fix Registry Issues</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Repair common registry errors</span>
+            </button>
+            <button class="btn-secondary" style="padding:12px; text-align:left; display:flex; flex-direction:column;" onclick="supApp.runRepair('chkdsk_scan')">
+              <strong style="color:#ffffff;">CHKDSK Read-Only</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Inspect NTFS file table</span>
+            </button>
+          </div>
+
+          <!-- AutoLogon & Power Plans Quick Management -->
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:12px; margin-bottom:16px;">
+            <div class="stat-card" style="padding:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="color:#ffffff; font-size:13px;">Windows AutoLogon</strong>
+                <span id="autologon-status-badge" class="pill-risk" style="background:rgba(255,255,255,0.06); color:var(--text-muted); font-size:11px; padding:2px 8px;">Checking...</span>
+              </div>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Configure automatic logon credentials or disable AutoLogon.</p>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-primary-amber" style="padding:5px 12px; font-size:11px;" onclick="supApp.openAutoLogonModal()">Configure AutoLogon</button>
+                <button class="btn-secondary" style="padding:5px 12px; font-size:11px;" onclick="supApp.disableAutoLogon()">Disable</button>
+              </div>
+            </div>
+
+            <div class="stat-card" style="padding:14px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="color:#ffffff; font-size:13px;">Power Management & Hibernation</strong>
+                <span class="pill-risk safe" style="font-size:11px; padding:2px 8px;">ACPI</span>
+              </div>
+              <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">Unlock Ultimate Performance power plan or reclaim SSD space from hiberfil.sys.</p>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-primary-amber" style="padding:5px 12px; font-size:11px;" onclick="supApp.enableUltimatePerformance()">Activate Ultimate Power Plan</button>
+                <button class="btn-secondary" style="padding:5px 12px; font-size:11px;" onclick="supApp.toggleHibernation()">Toggle Hibernation</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="console-term" id="repair-terminal-output">Ready. Select a diagnostic tool above to start execution...</div>
+        </div>
+
+        <!-- ==============================================================
+             10. HARDWARE SPECS PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-hardware">
+          <div class="toolbar-row">
+            <div>
+              <h2 style="font-size:16px; font-weight:700; color:#ffffff;">Hardware Inspection & Peripheral Diagnostics</h2>
+              <p style="font-size:12px; color:var(--text-secondary);">Comprehensive hardware specifications: CPU architectures, physical memory DIMM modules, graphics adapters, storage units, and connected peripherals.</p>
+            </div>
+            <button class="btn-primary-amber" onclick="supApp.loadHardware()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              <span>Refresh Hardware Data</span>
+            </button>
+          </div>
+
+          <!-- 1. Top Overview Cards -->
+          <div class="stats-grid-4" style="margin-top:14px;">
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Central Processor (CPU)</span>
+                <span class="pill-risk safe" id="hw-cpu-cores">-- Cores</span>
+              </div>
+              <strong style="font-size:14px; color:#ffffff;" id="hw-cpu-name">Loading CPU specifications...</strong>
+              <div class="stat-subtext" id="hw-cpu-clock" style="margin-top:6px;">Clock: -- MHz</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Memory (RAM)</span>
+                <span class="pill-risk caution" id="hw-ram-slots">-- / -- Slots</span>
+              </div>
+              <strong style="font-size:14px; color:#ffffff;" id="hw-ram-total">Loading RAM memory...</strong>
+              <div class="stat-subtext" id="hw-ram-speed" style="margin-top:6px;">Speed: -- MHz</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Graphics Adapter (GPU)</span>
+                <span class="pill-risk safe" id="hw-gpu-res">Display</span>
+              </div>
+              <strong style="font-size:14px; color:#ffffff;" id="hw-gpu-name">Loading GPU...</strong>
+              <div class="stat-subtext" id="hw-gpu-vram" style="margin-top:6px;">VRAM: -- MB</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-header">
+                <span class="stat-title">Motherboard & BIOS</span>
+                <span class="pill-risk safe">UEFI</span>
+              </div>
+              <strong style="font-size:14px; color:#ffffff;" id="hw-mb-name">Loading Motherboard...</strong>
+              <div class="stat-subtext" id="hw-bios-ver" style="margin-top:6px;">BIOS: --</div>
+            </div>
+          </div>
+
+          <!-- 2. Detailed RAM (Physical Memory Modules) -->
+          <h3 class="hw-section-title">
+            <span>🧠</span> <span>Physical RAM Modules & DIMM Specifications</span>
+          </h3>
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Slot / Locator</th>
+                    <th>Capacity</th>
+                    <th>Clock Speed</th>
+                    <th>Memory Type</th>
+                    <th>Form Factor</th>
+                    <th>Manufacturer</th>
+                    <th>Part Number</th>
+                    <th>Serial Number</th>
+                  </tr>
+                </thead>
+                <tbody id="hw-ram-modules-tbody">
+                  <tr><td colspan="8" style="text-align:center; padding:20px; color:var(--text-muted);">Loading physical RAM DIMM modules...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 3. Physical Storage Disks & Partitions -->
+          <h3 class="hw-section-title">
+            <span>💽</span> <span>Physical Storage Drives & Mounted Volumes</span>
+          </h3>
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Drive / Model</th>
+                    <th>Interface Type</th>
+                    <th>Media Type</th>
+                    <th>Total Capacity</th>
+                    <th>Device Status</th>
+                  </tr>
+                </thead>
+                <tbody id="hw-disks-tbody">
+                  <tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Loading physical storage drives...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 4. Video Display Adapters -->
+          <h3 class="hw-section-title">
+            <span>🖥️</span> <span>Video Display Adapters (GPU) & Display Resolutions</span>
+          </h3>
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>GPU Model</th>
+                    <th>Manufacturer</th>
+                    <th>Driver Version</th>
+                    <th>Driver Date</th>
+                    <th>Video Memory (VRAM)</th>
+                    <th>Active Resolution</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="hw-gpus-tbody">
+                  <tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">Loading graphics adapters...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5. Peripherals & Connected Devices -->
+          <h3 class="hw-section-title">
+            <span>🔌</span> <span>Connected Peripherals, Audio & Input Devices</span>
+          </h3>
+          <div class="table-panel">
+            <div class="table-scroll-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width:140px;">Category</th>
+                    <th>Device / Peripheral Name</th>
+                    <th>Manufacturer / Details</th>
+                    <th style="width:120px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="hw-peripherals-tbody">
+                  <tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">Loading connected peripherals...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             11. BACKUPS & TRANSACTION HISTORY PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-backups">
+          <div class="toolbar-row">
+            <div>
+              <h2 style="font-size:16px; font-weight:700;">Transaction Log & 1-Click Rollback Points</h2>
+              <p style="font-size:12px; color:var(--text-secondary);">Every optimization preserves original registry values in timestamped ChangeSets for instant reversal.</p>
+            </div>
+            <button class="btn-primary-amber" onclick="supApp.createRestorePoint()">+ Create System Restore Point</button>
+          </div>
+
+          <div class="table-panel">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ChangeSet ID</th>
+                  <th>Timestamp</th>
+                  <th>Trigger / Operation</th>
+                  <th>Modified Keys</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="backups-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             12. WINDOWS OPTIONAL FEATURES PANE (FeaturesService)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-features">
+          <div class="hero-boost-banner" style="margin-bottom:18px;">
+            <div class="hero-boost-text">
+              <h2>Optional Windows Features & Virtualization</h2>
+              <p>Enable or disable Windows virtualization layers, legacy sub-systems, and developer environments without reboot prompts.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-primary-amber" onclick="supApp.loadFeatures()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <span>Refresh Features</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="tweak-grid-2col" id="features-grid">
+            <!-- Dynamically populated via /api/features -->
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             13. SETUP PROFILES & PRESETS PANE (ConfigProfileService)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-profiles">
+          <div class="hero-boost-banner" style="margin-bottom:18px;">
+            <div class="hero-boost-text">
+              <h2>Save & Restore System Setup Configurations</h2>
+              <p>Export your tailored machine configuration to JSON or apply curated competitor presets (Gaming, Privacy, Workstation) in seconds.</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <button class="btn-primary-amber" onclick="supApp.exportProfile()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Export Configuration (JSON)</span>
+              </button>
+              <label class="btn-secondary" style="cursor:pointer; margin:0; display:inline-flex; align-items:center; gap:6px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 16 12 12 8 16"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path></svg>
+                <span>Import Configuration</span>
+                <input type="file" id="profile-file-input" accept=".json" style="display:none;" onchange="supApp.handleProfileUpload(event)">
+              </label>
+            </div>
+          </div>
+
+          <h3 style="font-size:15px; font-weight:700; color:#ffffff; margin: 16px 0 12px 0;">Curated Competitor Presets</h3>
+          <div class="stats-grid-4" id="profiles-preset-grid" style="grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+            <!-- Dynamically populated via /api/profiles/presets -->
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             14. AUTOUNATTEND GENERATOR PANE (AutounattendService)
+             ============================================================== -->
+        <div class="tab-pane" id="tab-unattend">
+          <div class="hero-boost-banner" style="margin-bottom:18px;">
+            <div class="hero-boost-text">
+              <h2>Windows Autounattend.xml Generator</h2>
+              <p>Generate zero-interaction automated installation files for Windows 11 & 10. Automatically bypass TPM 2.0 / Secure Boot checks, prevent Microsoft account lock-in, and pre-tune system settings.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn-primary-amber" onclick="supApp.downloadAutounattendXml()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download autounattend.xml</span>
+              </button>
+              <button class="btn-secondary" onclick="supApp.copyAutounattendXml()">
+                <span>Copy XML</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 360px 1fr; gap:18px; align-items:start;">
+            <!-- Form Controls -->
+            <div class="stat-card" style="display:flex; flex-direction:column; gap:14px;">
+              <h3 style="font-size:14px; font-weight:700; color:#ffffff;">Installation Parameters</h3>
+
+              <div>
+                <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Target Operating System</label>
+                <select id="unattend-os" class="select-filter" style="width:100%;" onchange="supApp.generateAutounattendPreview()">
+                  <option value="Windows 11">Windows 11 Pro / Enterprise (x64)</option>
+                  <option value="Windows 10">Windows 10 Pro / Enterprise (x64)</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Default Local Username</label>
+                <input type="text" id="unattend-user" class="search-input-field" value="User" oninput="supApp.generateAutounattendPreview()">
+              </div>
+
+              <div>
+                <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Password (Leave empty for none)</label>
+                <input type="password" id="unattend-pass" class="search-input-field" placeholder="Optional local password" oninput="supApp.generateAutounattendPreview()">
+              </div>
+
+              <div>
+                <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Computer Hostname</label>
+                <input type="text" id="unattend-pcname" class="search-input-field" value="PC-OPTIMIZED" oninput="supApp.generateAutounattendPreview()">
+              </div>
+
+              <div>
+                <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Time Zone</label>
+                <select id="unattend-tz" class="select-filter" style="width:100%;" onchange="supApp.generateAutounattendPreview()">
+                  <option value="UTC">UTC (Universal Coordinated Time)</option>
+                  <option value="W. Europe Standard Time">W. Europe Standard Time (Rome, Berlin, Paris)</option>
+                  <option value="Eastern Standard Time">Eastern Standard Time (New York, Miami)</option>
+                  <option value="Pacific Standard Time">Pacific Standard Time (Los Angeles, Seattle)</option>
+                </select>
+              </div>
+
+              <div style="border-top:1px solid var(--border-subtle); padding-top:12px;">
+                <span style="font-size:13px; font-weight:600; color:#ffffff; display:block; margin-bottom:8px;">Bypasses & Customizations</span>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-tpm" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Bypass TPM 2.0, Secure Boot & RAM Check</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-local" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Bypass Microsoft Account (Force Local User)</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-autologon" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Enable Auto-Logon on First Boot</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-dark" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Enable Windows Dark Theme</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-telemetry" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Disable Telemetry & Diagnostic Data</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-drivers" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Prevent Automatic Driver Updates via WU</span>
+                </label>
+
+                <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:12px; color:var(--text-main); cursor:pointer;">
+                  <input type="checkbox" id="unattend-endtask" checked onchange="supApp.generateAutounattendPreview()">
+                  <span>Enable Taskbar 'End Task' Context Menu</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- XML Preview Card -->
+            <div class="stat-card" style="display:flex; flex-direction:column; height: 600px; padding:0; overflow:hidden;">
+              <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:rgba(0,0,0,0.3); border-bottom:1px solid var(--border-subtle);">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span style="width:10px; height:10px; border-radius:50%; background:#ef4444; display:inline-block;"></span>
+                  <span style="width:10px; height:10px; border-radius:50%; background:#f59e0b; display:inline-block;"></span>
+                  <span style="width:10px; height:10px; border-radius:50%; background:#10b981; display:inline-block;"></span>
+                  <span style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary); margin-left:8px;">autounattend.xml</span>
+                </div>
+                <span style="font-size:11px; color:var(--text-muted);">Save to root of USB Install Drive</span>
+              </div>
+              <textarea id="unattend-xml-preview" readonly class="code-editor-area" style="flex:1; border:none; border-radius:0; height:100%; font-size:11px; line-height:1.5;"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             15. SETTINGS PANE
+             ============================================================== -->
+        <div class="tab-pane" id="tab-settings">
+          <div class="stat-card" style="max-width:700px; margin-bottom:20px;">
+            <h3 style="font-size:15px; font-weight:700; margin-bottom:14px;">Platform Preferences</h3>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border-subtle);">
+              <div>
+                <strong style="color:#ffffff;">Safe Test Mode (Dry-Run Preview)</strong>
+                <p style="font-size:12px; color:var(--text-muted);">Simulate all tweaks without applying changes to the Windows Registry.</p>
+              </div>
+              <input type="checkbox" id="cfg-safe-mode" onchange="supApp.toggleSafeTestMode(this.checked)" style="transform:scale(1.2);">
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border-subtle);">
+              <div>
+                <strong style="color:#ffffff;">Local API Server</strong>
+                <p style="font-size:12px; color:var(--text-muted);" id="cfg-server-url">http://127.0.0.1:5000/</p>
+              </div>
+              <button class="btn-secondary" onclick="supApp.openExternalBrowser()">Open URL</button>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0;">
+              <div>
+                <strong style="color:#ffffff;">Audit & Operation Logs</strong>
+                <p style="font-size:12px; color:var(--text-muted);">Clear all persisted session logs and telemetry cache.</p>
+              </div>
+              <button class="btn-secondary" onclick="supApp.clearAuditLogs()">Clear Logs</button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       MODALS
+       ==================================================================== -->
+
+  <!-- Tweak Code Inspect Modal (< / >) -->
+  <div class="modal-backdrop" id="modal-inspect">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <span class="modal-title" id="inspect-modal-title">Tweak Technical Details</span>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" id="inspect-modal-body">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Command Palette Modal (Ctrl+K) -->
+  <div class="modal-backdrop" id="modal-palette">
+    <div class="modal-dialog" style="max-width:540px;">
+      <div class="modal-head" style="padding:12px 16px;">
+        <input type="text" id="palette-search-input" class="search-input-field" placeholder="Type a command, tool, or tweak name..." oninput="supApp.filterPalette()" autofocus>
+      </div>
+      <div class="modal-body" id="palette-results-list" style="padding:8px; max-height:360px;">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Close Confirmation Modal (Exit vs Minimize to Tray) -->
+  <div class="modal-backdrop" id="modal-close-confirm">
+    <div class="modal-dialog" style="max-width:480px;">
+      <div class="modal-head">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:16px;">🚪</span>
+          <span class="modal-title">Close SUPOptimizer</span>
+        </div>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:14px; padding:20px;">
+        <p style="font-size:13px; color:var(--text-main); line-height:1.5;">
+          How would you like to handle closing <strong>SUPOptimizer</strong>?
+        </p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button class="btn-secondary" onclick="supApp.confirmMinimizeToTray()" style="padding:14px; display:flex; align-items:center; gap:14px; text-align:left; border-radius:8px;">
+            <span style="font-size:22px;">📥</span>
+            <div>
+              <strong style="color:#ffffff; display:block; font-size:13px; margin-bottom:2px;">Minimize to System Tray</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Keep running in the background for quick tray actions and background optimization.</span>
+            </div>
+          </button>
+          <button class="btn-secondary" onclick="supApp.confirmExitApp()" style="padding:14px; display:flex; align-items:center; gap:14px; text-align:left; border-radius:8px; border-color:rgba(239, 68, 68, 0.35);">
+            <span style="font-size:22px;">✕</span>
+            <div>
+              <strong style="color:#ef4444; display:block; font-size:13px; margin-bottom:2px;">Exit Application Completely</strong>
+              <span style="font-size:11px; color:var(--text-muted);">Shut down the application, local API server, and all background listeners.</span>
+            </div>
+          </button>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1-Click Safe Boost Explanation & Action Modal -->
+  <div class="modal-backdrop" id="modal-safe-boost">
+    <div class="modal-dialog modal-dialog-large">
+      <div class="modal-head">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:18px;">⚡</span>
+          <span class="modal-title">1-Click Safe Boost - Instant Transparent System Optimization</span>
+        </div>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
+        <div style="background:rgba(217,119,6,0.1); border:1px solid rgba(217,119,6,0.3); border-radius:6px; padding:12px 14px; font-size:12px; color:var(--text-secondary); line-height:1.5;">
+          <strong style="color:var(--amber-gold); display:block; margin-bottom:4px;">What does Safe Boost do?</strong>
+          Safe Boost applies a suite of conservative, 100% reversible optimizations ensuring absolute system stability without affecting critical services or personal user files. An automated rollback checkpoint is created:
+        </div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">🧹 Flush DNS Cache & Network Resolver</div>
+            <div style="font-size:11px; color:var(--text-muted);">Flushes local DNS resolver cache (ipconfig /flushdns) and purges routing tables to eliminate browsing and socket latency.</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">🗑️ Clean Safe Temporary Cache</div>
+            <div style="font-size:11px; color:var(--text-muted);">Deletes volatile .tmp files and cached system data (%temp%, C:\Windows\Temp) reclaiming immediate drive capacity.</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">🛡️ Disable Diagnostic Telemetry</div>
+            <div style="font-size:11px; color:var(--text-muted);">Disables background Windows diagnostic telemetry logging and advertising trackers to alleviate CPU overhead.</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">⚡ Reduce File Explorer Latency</div>
+            <div style="font-size:11px; color:var(--text-muted);">Eliminates context menu animation delay (MenuShowDelay to 0ms) for snappy desktop interactions.</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">🎮 Prioritize Windows Game Mode</div>
+            <div style="font-size:11px; color:var(--text-muted);">Ensures Windows Game Mode is enabled to dedicate primary CPU/GPU scheduling to foreground applications.</div>
+          </div>
+          <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:6px; padding:10px 12px;">
+            <div style="font-weight:600; font-size:12px; color:#ffffff; margin-bottom:4px;">🧠 Compact RAM Working Set</div>
+            <div style="font-size:11px; color:var(--text-muted);">Trims inactive working set memory pages from idle background processes, releasing available RAM to system.</div>
+          </div>
+        </div>
+
+        <div id="safe-boost-progress-area" style="display:none; margin-top:6px;">
+          <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+            <span id="safe-boost-status-text" style="color:var(--amber-gold);">Applying safe optimizations...</span>
+            <span id="safe-boost-percent" style="font-weight:700; color:#ffffff;">0%</span>
+          </div>
+          <div class="stat-gauge-track"><div class="stat-gauge-bar" id="safe-boost-progress-bar" style="width:0%;"></div></div>
+          <div id="safe-boost-log" style="font-family:monospace; font-size:11px; background:#0a0a0a; border:1px solid var(--border-subtle); border-radius:4px; padding:8px; margin-top:8px; max-height:100px; overflow-y:auto; color:var(--text-secondary);"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Close</button>
+        <button class="btn-primary-amber" id="btn-execute-safe-boost" onclick="supApp.runSafeBoost()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          <span>Execute Safe Boost Now</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Environment Variable Modal (Row-by-Row List & Raw Text Editor) -->
+  <div class="modal-backdrop" id="modal-edit-env">
+    <div class="modal-dialog modal-dialog-large">
+      <div class="modal-head">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span>✏️</span>
+          <span class="modal-title" id="edit-env-title">Edit Environment Variable</span>
+        </div>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="flex:1;">
+            <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Variable Name</label>
+            <input type="text" id="edit-env-name" class="search-input-field" readonly style="opacity:0.85; cursor:not-allowed;">
+          </div>
+          <div style="width:160px;">
+            <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Target Scope</label>
+            <input type="text" id="edit-env-scope" class="search-input-field" readonly style="opacity:0.85; cursor:not-allowed;">
+          </div>
+          <div style="width:160px; display:flex; align-items:flex-end;">
+            <button class="btn-secondary" id="btn-toggle-env-mode" onclick="supApp.toggleEditEnvMode()" style="width:100%; height:34px; font-size:11px;">
+              Raw Text Mode
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode 1: Multi-row list editor (for Path and semicolon-delimited lists) -->
+        <div id="edit-env-list-view" style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; color:var(--text-secondary);">Individual Entries (ordered by lookup priority):</span>
+            <button class="btn-primary-amber" onclick="supApp.addEnvRow()" style="padding:4px 10px; font-size:11px;">+ Add Row</button>
+          </div>
+          <div id="edit-env-rows-container" class="env-rows-container" style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:6px; border:1px solid var(--border-subtle); border-radius:6px; background:rgba(0,0,0,0.25);">
+            <!-- Populated dynamically with rows -->
+          </div>
+        </div>
+
+        <!-- Mode 2: Raw Textarea editor -->
+        <div id="edit-env-raw-view" style="display:none; flex-direction:column; gap:6px;">
+          <label style="font-size:12px; color:var(--text-secondary);">Full Raw Value:</label>
+          <textarea id="edit-env-raw-text" class="search-input-field" style="height:220px; font-family:monospace; font-size:12px; resize:vertical; padding:10px;"></textarea>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Cancel</button>
+        <button class="btn-primary-amber" onclick="supApp.saveEditedEnvVar()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Env Var Modal -->
+  <div class="modal-backdrop" id="modal-add-env">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <span class="modal-title">Add Environment Variable</span>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Variable Name</label>
+          <input type="text" id="new-env-name" class="search-input-field" placeholder="e.g. MAVEN_HOME or MY_TOOL">
+        </div>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Variable Value</label>
+          <input type="text" id="new-env-val" class="search-input-field" placeholder="e.g. C:\Tools\bin">
+        </div>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Target Scope</label>
+          <select id="new-env-scope" class="select-filter" style="width:100%;">
+            <option value="User">User (Current User Only)</option>
+            <option value="System">System (All Users - Requires Admin)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Cancel</button>
+        <button class="btn-primary-amber" onclick="supApp.saveNewEnvVar()">Save Variable</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Run Alias Modal -->
+  <div class="modal-backdrop" id="modal-add-alias">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <span class="modal-title">Add Win+R Run Command Alias</span>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Command Alias (what you type in Run)</label>
+          <input type="text" id="new-alias-name" class="search-input-field" placeholder="e.g. hosts, term, vsc">
+        </div>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Target Application / Executable Path</label>
+          <input type="text" id="new-alias-target" class="search-input-field" placeholder="e.g. C:\Windows\System32\notepad.exe">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Cancel</button>
+        <button class="btn-primary-amber" onclick="supApp.saveNewRunAlias()">Register Alias</button>
+      </div>
+    </div>
+  <!-- AutoLogon Modal -->
+  <div class="modal-backdrop" id="modal-autologon">
+    <div class="modal-dialog">
+      <div class="modal-head">
+        <span class="modal-title">Configure Windows AutoLogon</span>
+        <button class="btn-win" onclick="supApp.closeAllModals()">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <p style="font-size:12px; color:var(--text-secondary);">Enables instant, password-free Windows logon into your chosen local or domain user account.</p>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Username</label>
+          <input type="text" id="autologon-username" class="search-input-field" placeholder="e.g. Administrator or User">
+        </div>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Domain / Hostname (Use '.' for Local Account)</label>
+          <input type="text" id="autologon-domain" class="search-input-field" value=".">
+        </div>
+        <div>
+          <label style="color:var(--text-secondary); font-size:12px; display:block; margin-bottom:4px;">Account Password</label>
+          <input type="password" id="autologon-password" class="search-input-field" placeholder="Account password">
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn-secondary" onclick="supApp.closeAllModals()">Cancel</button>
+        <button class="btn-primary-amber" onclick="supApp.saveAutoLogon()">Save & Enable AutoLogon</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
