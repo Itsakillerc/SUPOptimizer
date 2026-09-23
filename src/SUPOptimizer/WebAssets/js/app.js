@@ -63,6 +63,7 @@ class SUPApp {
     // Initial Data Fetching
     await this.loadTweaks();
     await this.loadDebloat();
+    this.loadLicenseInfo();
     this.buildPaletteIndex();
 
     // Check Safe Test Mode checkbox in settings
@@ -895,6 +896,7 @@ class SUPApp {
       case "unlock": break;
       case "aliases": this.loadRunAliases(); break;
       case "contextmenu": this.loadContextMenuTweaks(); break;
+      case "license": this.loadLicenseInfo(); break;
     }
   }
 
@@ -1538,7 +1540,67 @@ class SUPApp {
     this.activeInstallerSubtab = cat;
     document.querySelectorAll("#tab-installer .subtab-item").forEach(b => b.classList.remove("active"));
     if (btn) btn.classList.add("active");
-    this.renderInstallerGrid();
+
+    const grid = document.getElementById("installer-grid");
+    const updatesPanel = document.getElementById("installer-updates-panel");
+
+    if (cat === "Updates") {
+      if (grid) grid.style.display = "none";
+      if (updatesPanel) updatesPanel.style.display = "block";
+      this.scanWingetUpgrades();
+    } else {
+      if (grid) grid.style.display = "grid";
+      if (updatesPanel) updatesPanel.style.display = "none";
+      this.renderInstallerGrid();
+    }
+  }
+
+  async scanWingetUpgrades() {
+    const tbody = document.getElementById("installer-updates-tbody");
+    const btnAll = document.getElementById("btn-upgrade-all");
+    if (!tbody) return;
+
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--text-muted);">Querying Winget for outdated applications...</td></tr>`;
+    if (btnAll) btnAll.style.display = "none";
+
+    try {
+      const upgrades = await this.api("/api/installer/upgrades");
+      if (!Array.isArray(upgrades) || upgrades.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--safe-green); font-weight:600;">✅ All installed applications are up to date!</td></tr>`;
+        return;
+      }
+
+      if (btnAll) btnAll.style.display = "inline-flex";
+
+      tbody.innerHTML = upgrades.map(u => `
+        <tr>
+          <td><strong style="color:#ffffff;">${this.escapeHtml(u.name || u.Name)}</strong></td>
+          <td><code style="font-size:11px; color:var(--accent-amber);">${this.escapeHtml(u.id || u.Id)}</code></td>
+          <td><span style="font-family:var(--font-mono); color:var(--text-secondary);">${this.escapeHtml(u.installedVersion || u.InstalledVersion)}</span></td>
+          <td><span style="font-family:var(--font-mono); color:var(--safe-green); font-weight:700;">${this.escapeHtml(u.availableVersion || u.AvailableVersion)}</span></td>
+          <td>
+            <button class="btn-primary-amber" style="padding:4px 10px; font-size:11px;" onclick="supApp.runWingetUpgrade('${this.escapeJs(u.id || u.Id)}')">Upgrade</button>
+          </td>
+        </tr>
+      `).join("");
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:24px; color:var(--danger-red);">Error checking updates: ${this.escapeHtml(err.message)}</td></tr>`;
+    }
+  }
+
+  async runWingetUpgrade(packageId) {
+    this.showToast(packageId === "all" ? "Starting bulk upgrade for all outdated applications..." : `Upgrading package ${packageId}...`, "info");
+    try {
+      const res = await this.api("/api/installer/upgrade", "POST", { packageId });
+      if (res.Success || res.success) {
+        this.showToast(res.Message || res.message, "success");
+        await this.scanWingetUpgrades();
+      } else {
+        this.showToast(`Upgrade error: ${res.Message || res.message}`, "error");
+      }
+    } catch (err) {
+      this.showToast(`Error: ${err.message}`, "error");
+    }
   }
 
   renderInstallerGrid() {
@@ -2256,6 +2318,7 @@ class SUPApp {
         }
       }
 
+      await this.loadBatteryInfo();
     } catch (err) { }
   }
 
@@ -2447,7 +2510,11 @@ class SUPApp {
       { title: "DISM Restore Health", category: "Repair", action: () => { this.switchTab("repair"); this.runRepair("dism_restorehealth"); } },
       { title: "Fix Registry Issues", category: "Repair", action: () => { this.switchTab("repair"); this.runRepair("fix_registry_issues"); } },
       { title: "Apply All Safe Optimizations", category: "Action", action: () => this.applyAllSafeTweaks() },
-      { title: "Purge All Recommended Bloat", category: "Action", action: () => this.removeRecommendedBloat() }
+      { title: "Purge All Recommended Bloat", category: "Action", action: () => this.removeRecommendedBloat() },
+      { title: "Purge Standby RAM Cache", category: "Memory", action: () => this.purgeRamMemory() },
+      { title: "Windows License & Activation", category: "System", action: () => { this.switchTab("systemtools"); this.switchSystemTool("license"); } },
+      { title: "Winget Software Updates", category: "Installer", action: () => { this.switchTab("installer"); this.filterInstaller("Updates"); } },
+      { title: "Generate Battery Diagnostic Report", category: "Power", action: () => this.openBatteryReport() }
     ];
   }
 
@@ -2493,6 +2560,134 @@ class SUPApp {
       };
       list.appendChild(div);
     });
+  }
+
+  // =========================================================================
+  // MEMORY PURGE (STANDBY RAM)
+  // =========================================================================
+  async purgeRamMemory() {
+    this.showToast("Purging standby cache & working sets...", "info");
+    try {
+      const res = await this.api("/api/system/memory/purge", "POST", {});
+      if (res.Success || res.success) {
+        this.showToast(`✅ ${res.Message || res.message}`, "success");
+        await this.fetchMetrics();
+      } else {
+        this.showToast(`Memory Purge Error: ${res.Message || res.message}`, "error");
+      }
+    } catch (err) {
+      this.showToast(`Error: ${err.message}`, "error");
+    }
+  }
+
+  // =========================================================================
+  // WINDOWS LICENSE & ACTIVATION STATUS
+  // =========================================================================
+  async loadLicenseInfo() {
+    try {
+      const info = await this.api("/api/system/license");
+      if (!info) return;
+
+      const isAct = !!(info.isActivated ?? info.IsActivated);
+      const statusText = info.licenseStatus || info.LicenseStatus || "Unknown";
+      const channel = info.channel || info.Channel || "Unknown";
+      const key = info.partialKey || info.PartialKey || "N/A";
+      const edition = info.edition || info.Edition || "Windows";
+      const expiry = info.expirationDate || info.ExpirationDate || "Permanent";
+
+      // Update Dashboard Baseline Table
+      const dashLicense = document.getElementById("dash-spec-license");
+      const dashBadge = document.getElementById("dash-spec-license-badge");
+      if (dashLicense) {
+        dashLicense.textContent = `${edition} (${channel}) - Key: *****-${key}`;
+      }
+      if (dashBadge) {
+        dashBadge.textContent = isAct ? "Genuine Active" : statusText;
+        dashBadge.className = isAct ? "pill-risk safe" : "pill-risk caution";
+      }
+
+      // Update System Tools License Panel
+      const sBadge = document.getElementById("lic-status-badge");
+      const sDesc = document.getElementById("lic-status-desc");
+      const sChan = document.getElementById("lic-channel-badge");
+      const sKey = document.getElementById("lic-partial-key");
+      const sEd = document.getElementById("lic-edition");
+      const sExp = document.getElementById("lic-expiry");
+
+      if (sBadge) {
+        sBadge.textContent = isAct ? "Genuine / Licensed" : statusText;
+        sBadge.className = isAct ? "pill-risk safe" : "pill-risk caution";
+      }
+      if (sDesc) sDesc.textContent = info.description || info.Description || (isAct ? "Permanently activated via digital license or retail key." : statusText);
+      if (sChan) sChan.textContent = channel;
+      if (sKey) sKey.textContent = key !== "N/A" ? `***** - ${key}` : "N/A";
+      if (sEd) sEd.textContent = edition;
+      if (sExp) sExp.textContent = `Validity: ${expiry}`;
+    } catch (err) { }
+  }
+
+  async openActivationSettings() {
+    try {
+      await this.api("/api/system/license/open-settings", "POST", {});
+      this.showToast("Opening Windows Activation Settings...", "info");
+    } catch (err) { }
+  }
+
+  // =========================================================================
+  // BATTERY & POWER REPORT
+  // =========================================================================
+  async loadBatteryInfo() {
+    try {
+      const bat = await this.api("/api/system/power/battery");
+      const container = document.getElementById("hw-battery-container");
+      if (!bat || !container) return;
+
+      const hasBat = !!(bat.hasBattery ?? bat.HasBattery);
+      const bPercent = document.getElementById("hw-bat-percent");
+      const bStatus = document.getElementById("hw-bat-status");
+      const bHealth = document.getElementById("hw-bat-health");
+      const bCap = document.getElementById("hw-bat-capacity");
+      const bCycles = document.getElementById("hw-bat-cycles");
+      const bPlan = document.getElementById("hw-bat-plan");
+
+      if (hasBat) {
+        container.style.display = "block";
+        if (bPercent) bPercent.textContent = `${bat.batteryPercent ?? bat.BatteryPercent ?? 100}%`;
+        if (bStatus) bStatus.textContent = bat.batteryStatus || bat.BatteryStatus || "Normal";
+        if (bHealth) {
+          const hVal = (bat.healthPercent ?? bat.HealthPercent ?? 100);
+          bHealth.textContent = `${hVal}%`;
+          bHealth.className = hVal >= 80 ? "pill-risk safe" : (hVal >= 60 ? "pill-risk caution" : "pill-risk");
+        }
+        if (bCap) {
+          const des = bat.designCapacityMwh ?? bat.DesignCapacityMwh ?? 0;
+          const full = bat.fullChargeCapacityMwh ?? bat.FullChargeCapacityMwh ?? 0;
+          bCap.textContent = des > 0 ? `${full} / ${des} mWh` : "Standard Capacity";
+        }
+        if (bCycles) bCycles.textContent = String(bat.cycleCount ?? bat.CycleCount ?? 0);
+        if (bPlan) bPlan.textContent = bat.activePowerPlan || bat.ActivePowerPlan || "Balanced";
+      } else {
+        // Desktop PC without battery
+        if (bPercent) bPercent.textContent = "N/A (Desktop)";
+        if (bStatus) bStatus.textContent = "Direct AC Wall Power";
+        if (bHealth) bHealth.textContent = "100% Direct";
+        if (bCap) bCap.textContent = "Continuous AC Power";
+        if (bCycles) bCycles.textContent = "0 (Desktop)";
+        if (bPlan) bPlan.textContent = bat.activePowerPlan || bat.ActivePowerPlan || "Balanced";
+      }
+    } catch (err) { }
+  }
+
+  async openBatteryReport() {
+    this.showToast("Generating official Windows battery report...", "info");
+    try {
+      const res = await this.api("/api/system/power/battery/open-report", "POST", {});
+      if (res.Success || res.success) {
+        this.showToast("Battery report opened in web browser.", "success");
+      } else {
+        this.showToast(`Could not generate report: ${res.Message || res.message}`, "warning");
+      }
+    } catch (err) { }
   }
 
   closeAllModals() {

@@ -230,6 +230,15 @@ namespace SUPOptimizer.Server
                             var (alEnabled, alUser, alDom) = RepairService.GetAutoLogonStatus();
                             SendJson(resp, new { enabled = alEnabled, username = alUser, domain = alDom });
                             return;
+                        case "/api/system/license":
+                            SendJson(resp, LicenseService.GetLicenseInfo());
+                            return;
+                        case "/api/system/power/battery":
+                            SendJson(resp, PowerBatteryService.GetBatteryInfo());
+                            return;
+                        case "/api/installer/upgrades":
+                            SendJson(resp, AppInstallerService.GetUpgradableApps());
+                            return;
                     }
                 }
                 else if (method == "POST")
@@ -634,6 +643,31 @@ namespace SUPOptimizer.Server
                             {
                                 var (hS, hM) = SystemToolsService.BlockAdobeDomainsInHosts();
                                 SendJson(resp, new { success = hS, message = hM });
+                                return;
+                            }
+                        case "/api/system/license/open-settings":
+                            {
+                                var (s, m) = LicenseService.OpenActivationSettings();
+                                SendJson(resp, new { success = s, message = m });
+                                return;
+                            }
+                        case "/api/system/memory/purge":
+                            {
+                                var res = MemoryPurgeService.PurgeMemory();
+                                SendJson(resp, res);
+                                return;
+                            }
+                        case "/api/system/power/battery/open-report":
+                            {
+                                var (s, m, p) = PowerBatteryService.GenerateAndOpenReport();
+                                SendJson(resp, new { success = s, message = m, path = p });
+                                return;
+                            }
+                        case "/api/installer/upgrade":
+                            {
+                                string pkgId = root?.TryGetProperty("packageId", out var pEl) == true ? pEl.GetString() ?? "all" : "all";
+                                var res = AppInstallerService.UpgradeApp(pkgId);
+                                SendJson(resp, new { success = res.Success, message = res.Message });
                                 return;
                             }
                     }

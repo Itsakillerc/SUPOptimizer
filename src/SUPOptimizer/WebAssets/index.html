@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SUPOptimizer - Native Windows System Engineering Platform</title>
+  <title>SUPOptimizer v1.0.1 - Native Windows System Engineering Platform</title>
   <link rel="stylesheet" href="css/styles.css">
   <script>
     window.SUP_TOKEN = "{{SUP_TOKEN}}";
@@ -26,7 +26,7 @@
         </div>
         <div class="brand-titles">
           <span class="brand-title">SUPOptimizer</span>
-          <span class="brand-badge">v1.0.0</span>
+          <span class="brand-badge">v1.0.1</span>
         </div>
       </div>
 
@@ -194,7 +194,10 @@
             <div class="stat-card">
               <div class="stat-header">
                 <span class="stat-title">Memory Working Set</span>
-                <span class="pill-risk caution" id="dash-ram-val">0%</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <button class="btn-sm-action" onclick="supApp.purgeRamMemory()" title="Purge standby cache & working sets to free RAM" style="background:rgba(0,242,254,0.15); border:1px solid rgba(0,242,254,0.3); color:#00f2fe; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">⚡ Purge RAM</button>
+                  <span class="pill-risk caution" id="dash-ram-val">0%</span>
+                </div>
               </div>
               <div class="stat-gauge-track"><div class="stat-gauge-bar" id="dash-ram-bar" style="width:0%;"></div></div>
               <div class="stat-subtext" id="dash-ram-detail">Initializing RAM memory...</div>
@@ -244,6 +247,7 @@
               </thead>
               <tbody id="dash-specs-tbody">
                 <tr><td>Operating System</td><td id="dash-spec-os">Microsoft Windows 11 / 10</td><td><span class="pill-risk safe">Active</span></td></tr>
+                <tr><td>Windows License & Activation</td><td id="dash-spec-license">Checking official license status...</td><td><span class="pill-risk safe" id="dash-spec-license-badge">Genuine</span></td></tr>
                 <tr><td>Central Processing Unit</td><td id="dash-spec-cpu">Detecting CPU architecture...</td><td><span class="pill-risk safe">Optimal</span></td></tr>
                 <tr><td>Dedicated Graphics</td><td id="dash-spec-gpu">Detecting Graphics Adapter...</td><td><span class="pill-risk safe">DirectX 12</span></td></tr>
                 <tr><td>Motherboard & BIOS</td><td id="dash-spec-mb">Detecting Motherboard...</td><td><span class="pill-risk safe">UEFI Secure</span></td></tr>
@@ -444,6 +448,37 @@
             <button class="subtab-item" onclick="supApp.filterInstaller('Development', this)">Development</button>
             <button class="subtab-item" onclick="supApp.filterInstaller('Media', this)">Media & Audio</button>
             <button class="subtab-item" onclick="supApp.filterInstaller('Gaming', this)">Gaming Clients</button>
+            <button class="subtab-item" onclick="supApp.filterInstaller('Updates', this)" style="color:#00f2fe; font-weight:700;">⚡ Software Updates</button>
+          </div>
+
+          <!-- Software Updates Panel (Winget Upgrades) -->
+          <div id="installer-updates-panel" style="display:none; margin-bottom:20px;">
+            <div class="toolbar-row" style="margin-bottom:12px;">
+              <div>
+                <h3 style="font-size:15px; font-weight:700; color:#fff;">Winget Outdated Software Scanner</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">Scans installed software packages for pending updates and applies silent bulk upgrades.</p>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-secondary" onclick="supApp.scanWingetUpgrades()">Scan for Updates</button>
+                <button class="btn-primary-amber" id="btn-upgrade-all" onclick="supApp.runWingetUpgrade('all')" style="display:none;">Upgrade All Packages</button>
+              </div>
+            </div>
+            <div class="table-panel">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Package Name</th>
+                    <th>Package ID</th>
+                    <th>Installed Version</th>
+                    <th>Available Version</th>
+                    <th style="width:110px;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="installer-updates-tbody">
+                  <tr><td colspan="5" style="text-align:center; padding:20px; color:var(--text-muted);">Click "Scan for Updates" to query Winget for available application updates.</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div class="tweak-grid-2col" id="installer-grid">
@@ -565,6 +600,7 @@
             <button class="subtab-item" onclick="supApp.switchSystemTool('unlock', this)">File Unlocker</button>
             <button class="subtab-item" onclick="supApp.switchSystemTool('aliases', this)">Run Dialog Aliases</button>
             <button class="subtab-item" onclick="supApp.switchSystemTool('contextmenu', this)">Context Menu Tweaks</button>
+            <button class="subtab-item" onclick="supApp.switchSystemTool('license', this)" style="color:#00f2fe; font-weight:700;">Windows License & Activation</button>
           </div>
 
           <!-- Tool 1: HOSTS Editor -->
@@ -653,6 +689,51 @@
           <div class="systool-subpane" id="tool-contextmenu" style="display:none;">
             <div class="tweak-grid-2col" id="contextmenu-tweaks-grid">
               <!-- Dynamically populated with Take Ownership, Open with Notepad, etc. -->
+            </div>
+          </div>
+
+          <!-- Tool 6: Windows License & Activation Center -->
+          <div class="systool-subpane" id="tool-license" style="display:none;">
+            <div class="toolbar-row" style="margin-bottom:16px;">
+              <div>
+                <h3 style="font-size:15px; font-weight:700; color:#fff;">Official Windows License & Activation Center</h3>
+                <p style="font-size:12px; color:var(--text-secondary);">Query native SoftwareLicensingProduct status, license channel, and partial product key.</p>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-secondary" onclick="supApp.loadLicenseInfo()">Refresh Status</button>
+                <button class="btn-primary-amber" onclick="supApp.openActivationSettings()">Open Windows Activation Settings ↗</button>
+              </div>
+            </div>
+
+            <div class="stats-grid-4" style="margin-bottom:20px;">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Activation Status</span>
+                  <span class="pill-risk safe" id="lic-status-badge">Checking...</span>
+                </div>
+                <div class="stat-subtext" id="lic-status-desc">Loading...</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">License Channel</span>
+                  <span class="pill-risk safe" id="lic-channel-badge">--</span>
+                </div>
+                <div class="stat-subtext">Retail / OEM / Volume KMS</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Partial Key</span>
+                  <span class="pill-risk safe" id="lic-partial-key">--</span>
+                </div>
+                <div class="stat-subtext">Last 5 characters of key</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Windows Edition</span>
+                  <span class="pill-risk safe" id="lic-edition">--</span>
+                </div>
+                <div class="stat-subtext" id="lic-expiry">Permanent</div>
+              </div>
             </div>
           </div>
         </div>
@@ -876,6 +957,45 @@
                   <tr><td colspan="4" style="text-align:center; padding:20px; color:var(--text-muted);">Loading connected peripherals...</td></tr>
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- 6. Battery Health & Power Diagnostics -->
+          <div id="hw-battery-container" style="margin-top:24px;">
+            <h3 class="hw-section-title">
+              <span>🔋</span> <span>Battery Health & Power Diagnostics</span>
+            </h3>
+            <div class="stats-grid-4" style="margin-bottom:12px;">
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Battery Level</span>
+                  <span class="pill-risk safe" id="hw-bat-percent">--</span>
+                </div>
+                <div class="stat-subtext" id="hw-bat-status">Scanning battery...</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Battery Health</span>
+                  <span class="pill-risk safe" id="hw-bat-health">--</span>
+                </div>
+                <div class="stat-subtext" id="hw-bat-capacity">Design vs Full Charge</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Cycle Count</span>
+                  <span class="pill-risk safe" id="hw-bat-cycles">--</span>
+                </div>
+                <div class="stat-subtext">Lifetime charge cycles</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-header">
+                  <span class="stat-title">Power Plan</span>
+                  <span class="pill-risk safe" id="hw-bat-plan">--</span>
+                </div>
+                <div class="stat-subtext" style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                  <button class="btn-sm-action" onclick="supApp.openBatteryReport()" style="background:rgba(0,242,254,0.15); border:1px solid rgba(0,242,254,0.3); color:#00f2fe; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">Open Report (HTML)</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

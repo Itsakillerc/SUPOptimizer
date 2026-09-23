@@ -59,10 +59,10 @@ try {
     $html = $webResp.Content
 
     # Check Sidebar & Brand Markup
-    if ($html.Contains('class="brand-title">SUPOptimizer</span>') -and $html.Contains('class="brand-badge">v1.0.0</span>')) {
-        Write-Host "      [OK] Brand title verified: SUPOptimizer v1.0.0" -ForegroundColor Green
+    if ($html.Contains('class="brand-title">SUPOptimizer</span>') -and $html.Contains('class="brand-badge">v1.0.1</span>')) {
+        Write-Host "      [OK] Brand title verified: SUPOptimizer v1.0.1" -ForegroundColor Green
     } else {
-        throw "Brand title markup or v1.0.0 badge missing in HTML!"
+        throw "Brand title markup or v1.0.1 badge missing in HTML!"
     }
 
     if ($html.Contains('class="app-sidebar"')) {
@@ -331,6 +331,25 @@ try {
     # Test Block Adobe Domains in Hosts
     $adobeHostsResp = Invoke-RestMethod -Uri "http://127.0.0.1:$port/api/tools/hosts/block-adobe" -Method Post -Headers $headers -Body "{}" -ContentType "application/json" -TimeoutSec 10
     Write-Host "      [OK] /api/tools/hosts/block-adobe: $($adobeHostsResp.message)" -ForegroundColor Green
+
+    # 6c. Test Evaluated Feature Set (License, Battery, Winget Upgrades, Standby Memory Purge)
+    Write-Host "`n[6c/7] Validating New Advanced Feature Set (License, Battery, Winget Upgrades, Standby Memory)..." -ForegroundColor Yellow
+
+    # Test License API
+    $lic = Invoke-RestMethod -Uri "http://127.0.0.1:$port/api/system/license" -Headers $headers -TimeoutSec 10
+    Write-Host "      [OK] /api/system/license: Status='$($lic.licenseStatus)', Channel='$($lic.channel)', Key='$($lic.partialKey)', Edition='$($lic.edition)'" -ForegroundColor Green
+
+    # Test Battery API
+    $bat = Invoke-RestMethod -Uri "http://127.0.0.1:$port/api/system/power/battery" -Headers $headers -TimeoutSec 10
+    Write-Host "      [OK] /api/system/power/battery: HasBattery=$($bat.hasBattery), Status='$($bat.batteryStatus)', Health=$($bat.healthPercent)%, Plan='$($bat.activePowerPlan)'" -ForegroundColor Green
+
+    # Test Winget Upgrades API
+    $upgrades = Invoke-RestMethod -Uri "http://127.0.0.1:$port/api/installer/upgrades" -Headers $headers -TimeoutSec 20
+    Write-Host "      [OK] /api/installer/upgrades: Inspected package upgrades (Found: $($upgrades.Count) pending)" -ForegroundColor Green
+
+    # Test Memory Purge API
+    $purgeResp = Invoke-RestMethod -Uri "http://127.0.0.1:$port/api/system/memory/purge" -Method Post -Headers $headers -Body "{}" -ContentType "application/json" -TimeoutSec 15
+    Write-Host "      [OK] /api/system/memory/purge: Reclaimed $($purgeResp.reclaimedMb) MB from $($purgeResp.processedCount) processes" -ForegroundColor Green
 
     # 7. Clean Shutdown
     Write-Host "`n[7/7] Shutting down application cleanly..." -ForegroundColor Yellow

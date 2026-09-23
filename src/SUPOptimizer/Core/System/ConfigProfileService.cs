@@ -34,7 +34,7 @@ namespace SUPOptimizer.Core.System
 
     public static class ConfigProfileService
     {
-        public static ConfigProfile ExportCurrentConfiguration(string profileName = "My Windows Setup", string description = "Exported from SUPOptimizer v1.0.0")
+        public static ConfigProfile ExportCurrentConfiguration(string profileName = "My Windows Setup", string description = "Exported from SUPOptimizer v1.0.1")
         {
             var profile = new ConfigProfile
             {

@@ -72,7 +72,7 @@ namespace SUPOptimizer.Host
             _contextMenu.Items.Add(new ToolStripMenuItem("About SUPOptimizer", null, (s, e) =>
             {
                 MessageBox.Show(
-                    "SUPOptimizer v1.0.0 Portable\n\nModern Windows Native System Optimization & Maintenance Platform.\nSelf-contained portable single executable.\n\nLocal Web UI: " + _serverUrl,
+                    "SUPOptimizer v1.0.1 Portable\n\nModern Windows Native System Optimization & Maintenance Platform.\nSelf-contained portable single executable.\n\nLocal Web UI: " + _serverUrl,
                     "About SUPOptimizer",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);

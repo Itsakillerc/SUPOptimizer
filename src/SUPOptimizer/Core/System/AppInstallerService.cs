@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using SUPOptimizer.Core.Logging;
 
 namespace SUPOptimizer.Core.System
@@ -14,6 +15,14 @@ namespace SUPOptimizer.Core.System
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public bool IsInstalled { get; set; }
+    }
+
+    public class UpgradableApp
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
+        public string InstalledVersion { get; set; } = string.Empty;
+        public string AvailableVersion { get; set; } = string.Empty;
     }
 
     public static class AppInstallerService
@@ -113,6 +122,106 @@ namespace SUPOptimizer.Core.System
             {
                 AuditLogger.Log("Installer", "Install Error", ex.Message, success: false, errorMessage: ex.Message);
                 return (false, $"Installation error: {ex.Message}");
+            }
+        }
+
+        public static List<UpgradableApp> GetUpgradableApps()
+        {
+            var list = new List<UpgradableApp>();
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "winget.exe",
+                    Arguments = "upgrade --include-unknown",
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                using var proc = Process.Start(psi);
+                if (proc == null) return list;
+
+                string output = proc.StandardOutput.ReadToEnd();
+                proc.WaitForExit(45000);
+
+                var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                bool tableStarted = false;
+                foreach (var line in lines)
+                {
+                    if (line.StartsWith("---") || line.Contains("---"))
+                    {
+                        tableStarted = true;
+                        continue;
+                    }
+                    if (!tableStarted) continue;
+                    if (line.Contains("upgrades available", StringComparison.OrdinalIgnoreCase) || 
+                        line.Contains("aggiornamenti disponibili", StringComparison.OrdinalIgnoreCase)) 
+                        break;
+
+                    var parts = Regex.Split(line.Trim(), @"\s{2,}");
+                    if (parts.Length >= 4)
+                    {
+                        list.Add(new UpgradableApp
+                        {
+                            Name = parts[0].Trim(),
+                            Id = parts[1].Trim(),
+                            InstalledVersion = parts[2].Trim(),
+                            AvailableVersion = parts[3].Trim()
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AuditLogger.Log("Installer", "Check Upgrades Error", ex.Message, success: false, errorMessage: ex.Message);
+            }
+            return list;
+        }
+
+        public static (bool Success, string Message) UpgradeApp(string packageId)
+        {
+            try
+            {
+                string args = string.Equals(packageId, "all", StringComparison.OrdinalIgnoreCase)
+                    ? "upgrade --all --silent --accept-source-agreements --accept-package-agreements"
+                    : $"upgrade --id \"{packageId}\" -e --silent --accept-source-agreements --accept-package-agreements";
+
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "winget.exe",
+                    Arguments = args,
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                };
+
+                using var proc = Process.Start(psi);
+                if (proc == null)
+                    return (false, "Could not start winget process.");
+
+                proc.WaitForExit(300000);
+
+                if (proc.ExitCode == 0)
+                {
+                    AuditLogger.Log("Installer", "Upgraded Package", packageId);
+                    return (true, $"Package '{packageId}' upgraded successfully.");
+                }
+                else
+                {
+                    string outMsg = proc.StandardOutput.ReadToEnd();
+                    string err = proc.StandardError.ReadToEnd();
+                    string combined = string.IsNullOrEmpty(err) ? outMsg : err;
+                    AuditLogger.Log("Installer", "Upgrade Result", $"{packageId} exited with {proc.ExitCode}: {combined}");
+                    return (true, $"Upgrade operation completed (Code {proc.ExitCode}).");
+                }
+            }
+            catch (Exception ex)
+            {
+                AuditLogger.Log("Installer", "Upgrade Error", ex.Message, success: false, errorMessage: ex.Message);
+                return (false, $"Upgrade failed: {ex.Message}");
             }
         }
     }

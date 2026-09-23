@@ -2,6 +2,7 @@
 dist/
 bin/
 obj/
+data/
 
 # Visual Studio / IDE temporary files
 .vs/
