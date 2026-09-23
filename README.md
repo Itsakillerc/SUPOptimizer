@@ -2,8 +2,8 @@
 
 <div align="center">
   <h1><span style="color:#00f2fe;font-weight:900;">SUPO</span><span style="color:#f0f6fc;font-weight:700;">ptimizer</span></h1>
-  <p><strong>Suite Professionale Open-Source di Amministrazione, Ottimizzazione, Debloating e Manutenzione per Windows 10 & Windows 11</strong></p>
-  <p><em>Eseguibile portatile singolo (Zero-Install), motore Web locale integrato, interfaccia ultra-moderna e tray host nativo.</em></p>
+  <p><strong>Professional Open-Source Administration, Optimization, Debloating, and Maintenance Suite for Windows 10 & Windows 11</strong></p>
+  <p><em>Single portable executable (Zero-Install), embedded local web engine, ultra-modern UI, and native system tray host.</em></p>
 
   <p>
     <img src="https://img.shields.io/badge/Version-1.0.1-brightgreen?style=flat-square" alt="Version 1.0.1">
@@ -17,88 +17,88 @@
 
 ---
 
-## Indice dei Contenuti
+## Table of Contents
 
-1. [Cos'è SUPOptimizer](#cosè-supoptimizer)
-2. [Caratteristiche Distintive](#caratteristiche-distintive)
-3. [Edizioni Disponibili (Standalone vs Lite)](#edizioni-disponibili-standalone-vs-lite)
-4. [Requisiti e Avvio Rapido](#requisiti-e-avvio-rapido)
-5. [Guida Dettagliata ai Moduli (19 Sezioni)](#guida-dettagliata-ai-moduli-19-sezioni)
-   - [Cluster Core](#1-cluster-core)
-   - [Cluster Windows](#2-cluster-windows)
-   - [Cluster Performance](#3-cluster-performance)
-   - [Cluster Maintenance](#4-cluster-maintenance)
-   - [Cluster System](#5-cluster-system)
-6. [Sicurezza, Reversibilità e Rollback](#sicurezza-reversibilità-e-rollback)
-7. [Scorciatoie da Tastiera](#scorciatoie-da-tastiera)
-8. [Compilazione e Build Pipeline](#compilazione-e-build-pipeline)
-9. [Test e Suite di Verifica Automatica](#test-e-suite-di-verifica-automatica)
-10. [FAQ e Risoluzione Problemi](#faq-e-risoluzione-problemi)
-11. [Registro Versioni e Ultime Modifiche](#registro-versioni-e-ultime-modifiche)
-
----
-
-## Cos'è SUPOptimizer
-
-**SUPOptimizer** è una suite completa e all'avanguardia per l'amministrazione, la pulizia e il tuning avanzato dei sistemi operativi **Microsoft Windows 10 e Windows 11 (64-bit)**. 
-
-Combina la potenza, la sicurezza e la reattività di un backend nativo in **C# / .NET 8** con un'interfaccia grafica moderna, elegante e reattiva ispirata ai design system di *Linear*, *Raycast* e *Apple macOS Sonoma*. 
-
-L'applicazione è progettata per essere **completamente portabile**: non richiede installazione, non installa driver di terze parti a basso livello, non sporca il registro di sistema e può essere avviata direttamente da una chiavetta USB di assistenza tecnica.
+1. [What is SUPOptimizer](#what-is-supoptimizer)
+2. [Key Features](#key-features)
+3. [Available Editions (Standalone vs Lite)](#available-editions-standalone-vs-lite)
+4. [Requirements and Quick Start](#requirements-and-quick-start)
+5. [Detailed Module Guide (19 Sections)](#detailed-module-guide-19-sections)
+   - [Core Cluster](#1-core-cluster)
+   - [Windows Cluster](#2-windows-cluster)
+   - [Performance Cluster](#3-performance-cluster)
+   - [Maintenance Cluster](#4-maintenance-cluster)
+   - [System Cluster](#5-system-cluster)
+6. [Security, Reversibility, and Rollback](#security-reversibility-and-rollback)
+7. [Keyboard Shortcuts](#keyboard-shortcuts)
+8. [Compilation and Build Pipeline](#compilation-and-build-pipeline)
+9. [Testing and Automated Verification Suite](#testing-and-automated-verification-suite)
+10. [FAQ and Troubleshooting](#faq-and-troubleshooting)
+11. [Version History and Changelog](#version-history-and-changelog)
 
 ---
 
-## Caratteristiche Distintive
+## What is SUPOptimizer
 
-- **Interfaccia Grafica Dual-Engine**:
-  - Finestra nativa accelerata via **Microsoft Edge WebView2**.
-  - Tasto **"Web View"**: visualizzazione immediata della dashboard nel browser predefinito dell'utente (Chrome, Edge, Brave, Firefox) collegandosi all'endpoint locale `http://127.0.0.1:<porta>/`.
-  - Funzionamento non bloccante: anche in ambienti privi del runtime WebView2 (ad esempio macchine virtuali minimali o ambienti Windows PE), l'app reindirizza automaticamente al browser web predefinito.
-- **Tray Host Integrato**:
-  - Riduzione discreta nella System Tray di Windows con menu contestuale per accesso rapido, gestione e chiusura.
-- **Oltre 80 Tweak di Registro e Kernel**:
-  - Personalizzazione dell'interfaccia utente, impostazioni di privacy, disattivazione telemetria, ottimizzazione di rete e latenza audio/video.
-- **Debloater UWP Selettivo e Profilato**:
-  - Rimozione di app preinstallate sponsorizzate e bloatware di sistema con preset guidati (*Safe*, *Balanced*, *Aggressive*).
-- **Console di Riparazione e Diagnostica Live**:
-  - Esecuzione trasparente e guidata di `SFC /scannow`, `DISM /RestoreHealth` e `CHKDSK` con streaming in tempo reale dei log a video.
-- **Generatore Autounattend.xml**:
-  - Creazione guidata del file di risposta XML per installazioni pulite e non presidiate di Windows 10 e 11, con bypass automatico dei requisiti TPM 2.0 / Secure Boot e configurazione di account locali offline.
-- **Command Palette Globale (`Ctrl+K`)**:
-  - Ricerca istantanea da tastiera per navigare tra i 19 moduli ed eseguire azioni rapide.
+**SUPOptimizer** is a comprehensive, state-of-the-art suite for the administration, cleanup, and advanced tuning of **Microsoft Windows 10 and Windows 11 (64-bit)** operating systems.
+
+It combines the performance, safety, and responsiveness of a native **C# / .NET 8** backend with a modern, elegant, and responsive UI inspired by the design languages of *Linear*, *Raycast*, and *Apple macOS Sonoma*.
+
+The application is engineered to be **completely portable**: zero installation required, no low-level third-party drivers installed, leaves no registry clutter, and can be run straight from an IT technician's USB drive.
 
 ---
 
-## Edizioni Disponibili (Standalone vs Lite)
+## Key Features
 
-La pipeline di compilazione automatizzata (`build-release.ps1`) produce due varianti portatili nella cartella `dist/`:
+- **Dual-Engine Graphical Interface**:
+  - Native hardware-accelerated window powered by **Microsoft Edge WebView2**.
+  - **"Web View"** button: instantly open the dashboard in your default browser (Chrome, Edge, Brave, Firefox) connected to the local endpoint `http://127.0.0.1:<port>/`.
+  - Non-blocking fallback: even in environments lacking the WebView2 runtime (such as minimal VMs or Windows PE environments), the application automatically redirects to your default web browser.
+- **Integrated System Tray Host**:
+  - Discreetly minimizes to the Windows System Tray with a context menu for quick access, management, and clean exit.
+- **Over 80 Registry & Kernel Tweaks**:
+  - UI customization, privacy hardening, telemetry deactivation, network tuning, and audio/video latency optimization.
+- **Selective & Profiled UWP Debloater**:
+  - Removal of preinstalled sponsored apps and system bloatware with guided presets (*Safe*, *Balanced*, *Aggressive*).
+- **Live Diagnostics & Repair Console**:
+  - Transparent, guided execution of `SFC /scannow`, `DISM /RestoreHealth`, and `CHKDSK` with real-time log streaming.
+- **Autounattend.xml Generator**:
+  - Step-by-step creation of automated answer files for unattended clean installations of Windows 10 & 11, including automatic bypass of TPM 2.0 / Secure Boot requirements and offline local account setup.
+- **Global Command Palette (`Ctrl+K`)**:
+  - Instant keyboard search to navigate across all 19 modules and execute quick actions.
 
-| Caratteristica | Standalone (`SUPOptimizer.exe`) | Lite (`SUPOptimizer-Lite.exe`) |
+---
+
+## Available Editions (Standalone vs Lite)
+
+The automated build pipeline (`build-release.ps1`) produces two portable variants in the `dist/` directory:
+
+| Feature | Standalone (`SUPOptimizer.exe`) | Lite (`SUPOptimizer-Lite.exe`) |
 | :--- | :--- | :--- |
-| **Dimensione** | ~68.9 MB | ~2.1 MB |
-| **Runtime .NET 8** | **Embedded / Incluso** (Self-contained) | Richiede .NET 8 Desktop Runtime installato nel PC |
-| **Installazione** | Nessuna (Zero-Install) | Nessuna (Zero-Install) |
-| **Caso d'uso ideale** | PC puliti, formattazioni fresche, chiavette USB di supporto tecnico, VM offline | Download ultra-rapido per macchine con .NET 8 già presente |
+| **Size** | ~68.9 MB | ~2.1 MB |
+| **.NET 8 Runtime** | **Embedded / Included** (Self-contained) | Requires .NET 8 Desktop Runtime installed on the PC |
+| **Installation** | None (Zero-Install) | None (Zero-Install) |
+| **Ideal Use Case** | Fresh installs, technician USB drives, offline VMs, clean PCs | Ultra-fast download for machines with .NET 8 already installed |
 
 ---
 
-## Requisiti e Avvio Rapido
+## Requirements and Quick Start
 
-### Requisiti di Sistema
-- **Sistema Operativo**: Windows 10 (versione 1809 o superiore) oppure Windows 11 (tutte le edizioni, x64).
-- **Privilegi**: È consigliato eseguire l'eseguibile con privilegi di amministratore (*Tasto destro > Esegui come amministratore*) per consentire la modifica di chiavi di registro di sistema (`HKLM`), servizi Windows e funzionalità DISM.
+### System Requirements
+- **Operating System**: Windows 10 (version 1809 or higher) or Windows 11 (all editions, x64).
+- **Privileges**: Running as Administrator (*Right click > Run as administrator*) is strongly recommended to allow management of system registry keys (`HKLM`), Windows services, and DISM features.
 
-### Come Avviare l'Applicazione
-1. Scarica `SUPOptimizer.exe` dalla cartella `dist/` o dai release ufficiali.
-2. Fai doppio clic sul file per avviarlo.
-3. Se desideri visualizzare la dashboard a tutto schermo nel tuo browser (es. Google Chrome o Microsoft Edge), clicca sul pulsante **"Web View"** in alto a destra nella barra dell'applicazione.
-4. Per chiudere o ridurre l'applicazione, puoi usare i controlli finestra o fare clic destro sull'icona nella barra delle applicazioni (System Tray).
+### How to Run
+1. Download `SUPOptimizer.exe` from the `dist/` folder or official releases.
+2. Double-click the file to launch it.
+3. If you prefer viewing the dashboard fullscreen in your web browser (e.g., Google Chrome or Microsoft Edge), click the **"Web View"** button in the top-right corner of the application bar.
+4. To minimize or close the app, use standard window controls or right-click the icon in the Windows System Tray.
 
 ---
 
-## Guida Dettagliata ai Moduli (19 Sezioni)
+## Detailed Module Guide (19 Sections)
 
-I moduli dell'applicazione sono raggruppati in 5 cluster logici nella barra laterale di navigazione:
+The application modules are grouped into 5 logical clusters in the navigation sidebar:
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -118,227 +118,227 @@ I moduli dell'applicazione sono raggruppati in 5 cluster logici nella barra late
 
 ---
 
-### 1. Cluster Core
+### 1. Core Cluster
 
 - **Dashboard**:
-  - Monitoraggio in tempo reale con micro-aggiornamenti della percentuale di utilizzo CPU, consumo RAM (usata/totale), spazio disponibile su disco e tempo di accensione del sistema (Uptime).
-  - **⚡ Purge RAM**: liberazione istantanea delle working set e della memoria in standby con calcolo in tempo reale dei MB recuperati.
-  - Rilevamento automatico di ambienti virtualizzati (Hyper-V, VMware, VirtualBox, QEMU) e stato conformità licenza Windows.
-  - Azioni rapide a 1 clic per manutenzione ordinaria e stato dei privilegi di amministratore.
+  - Real-time telemetry monitoring CPU usage percentage, RAM consumption (used/total), available disk space, and system uptime.
+  - **⚡ Purge RAM**: instant purging of working sets and non-essential standby memory with real-time reclaimed MB computation.
+  - Automated detection of virtualized environments (Hyper-V, VMware, VirtualBox, QEMU) and Windows license status.
+  - One-click quick actions for routine maintenance and administrator privilege indicators.
 - **Health Scan**:
-  - Scansione diagnostica rapida a 6 punti: integrità disco, servizi critici, stato antivirus, integrità file di sistema, spazio su disco e stato ripristino.
-  - Risultati classificati per severità visiva: *OK (Verde)*, *Info (Blu)*, *Attenzione (Giallo)*, *Critico (Rosso)*.
+  - Rapid 6-point diagnostic assessment: disk health, critical services, antivirus status, system file integrity, drive capacity, and restore point readiness.
+  - Severity-graded visual indicators: *OK (Green)*, *Info (Blue)*, *Warning (Yellow)*, *Critical (Red)*.
 - **Audit Logs**:
-  - Storico trasparente di ogni singola modifica apportata al sistema (valore precedente, valore applicato, timestamp e stato di successo).
+  - Full transparent history of every system modification (prior value, new value applied, timestamp, and success status).
 - **Settings**:
-  - Modalità sicura (Safe Mode / Dry Run per testare le operazioni senza scrivere su disco o registro).
-  - Gestione token di autenticazione per le API locali.
-  - Opzioni di comportamento alla chiusura della finestra (riduzione a icona nella Tray o chiusura completa).
+  - Safe mode toggle (Safe Mode / Dry Run to preview operations without modifying disk or registry).
+  - Authentication token management for local REST APIs.
+  - Window close behavior options (minimize to system tray or exit completely).
 
 ---
 
-### 2. Cluster Windows
+### 2. Windows Cluster
 
 - **Windows Tweaks**:
-  - **Interfaccia Utente ed Esplora File**: visualizzazione estensioni dei file noti, visualizzazione file e cartelle nascosti, ripristino del menu contestuale classico di Windows 10 su Windows 11, lettere di unità prima del nome del disco, rimozione delle cartelle Home e Raccolte da Esplora File.
-  - **Barra delle Applicazioni (Windows 11)**: opzione "Termina Attività" (End Task) col tasto destro sulle app aperte, allineamento a sinistra o al centro, commutazione rapida all'ultima finestra attiva (*LastActiveClick*).
-  - **Comportamento di Sistema**: disattivazione messaggi di errore inviati a Microsoft, disattivazione suggerimenti nella schermata di blocco, disattivazione notifiche fastidiose e riavvio automatico forzato dopo gli aggiornamenti.
+  - **User Interface & File Explorer**: show file extensions for known types, show hidden files and folders, restore classic Windows 10 context menu on Windows 11, display drive letters before drive names, remove Home/Gallery clutter from Explorer.
+  - **Taskbar (Windows 11)**: enable "End Task" on right-click for running apps, taskbar alignment (left vs. center), fast switching to last active window (*LastActiveClick*).
+  - **System Behavior**: disable Windows error reporting prompts, turn off lock screen tips and ads, suppress disruptive notifications, prevent forced automatic restarts after updates.
 - **Privacy & Telemetry**:
-  - Disattivazione del servizio di telemetria e diagnostica Microsoft (`DiagTrack`).
-  - Disabilitazione dell'Advertising ID per la profilazione pubblicitaria.
-  - Disattivazione di Cortana, Bing nella ricerca del menu Start e cronologia attività (Timeline).
-  - Disabilitazione di Microsoft Copilot AI, Windows Recall (istantanee schermo) e funzionalità AI intrusive in Blocco Note e Paint.
+  - Disable Microsoft diagnostic and telemetry service (`DiagTrack`).
+  - Turn off Advertising ID used for cross-app advertising profiling.
+  - Disable Cortana, Bing search integration in Start Menu, and Activity History (Timeline).
+  - Deactivate Microsoft Copilot AI, Windows Recall (screen snapshots), and intrusive AI features in Notepad and Paint.
 - **Debloater (UWP AppX)**:
-  - Catalogo curato di 38 pacchetti preinstallati spesso non necessari (app sponsorizzate, giochi promozionali, utility duplicate).
-  - Filtri per preset: **Safe** (app promozionali sicure da rimuovere), **Balanced** e **Aggressive**.
-  - Possibilità di disinstallazione profonda per Microsoft OneDrive e Microsoft Edge.
+  - Curated catalog of 38 preinstalled packages that are often unnecessary (sponsored apps, promotional games, duplicate utilities).
+  - Preset filters: **Safe** (risk-free removal of sponsored software), **Balanced**, and **Aggressive**.
+  - Deep-uninstall capabilities for Microsoft OneDrive and Microsoft Edge.
 - **Apps Manager**:
-  - Elenco completo dei programmi desktop (Win32 / x64) installati nel sistema.
-  - Ricerca rapida, ispezione del percorso di installazione e avvio del disinstallatore ufficiale con 1 clic.
+  - Full inventory of installed Win32 / x64 desktop software.
+  - Quick search, install path inspection, and one-click launch of official uninstallers.
 
 ---
 
-### 3. Cluster Performance
+### 3. Performance Cluster
 
 - **System Optimizer**:
-  - Ottimizzazione dello scheduling multimediale (`MMCSS`) e disattivazione del throttling di rete per lo streaming e i download ad alta velocità.
-  - Disattivazione del timestamp dell'ultimo accesso NTFS (`NtfsDisableLastAccessUpdate`) per ridurre le scritture inutili su SSD/NVMe.
-  - Attivazione del supporto ai percorsi lunghi oltre 260 caratteri (*Win32 Long Paths*).
+  - Multimedia Class Scheduler Service (`MMCSS`) tuning and network throttling removal for high-throughput streaming and downloads.
+  - Disable NTFS last access timestamp updates (`NtfsDisableLastAccessUpdate`) to reduce unnecessary SSD/NVMe writes.
+  - Enable Win32 Long Path support (>260 characters).
 - **Gaming Mode**:
-  - Attivazione della modalità gioco nativa di Windows.
-  - Disattivazione di Game DVR e della registrazione video in background per liberare cicli GPU.
-  - Disattivazione dell'accelerazione del puntatore del mouse (Enhanced Pointer Precision) per garantire un puntamento 1:1 raw input nei videogiochi.
-  - Disattivazione del Multiplane Overlay (MPO) per prevenire micro-stuttering e sfarfallii su GPU NVIDIA e AMD.
+  - Activate native Windows Game Mode.
+  - Disable Game DVR and background gameplay video capture to free up GPU cycles.
+  - Disable mouse pointer acceleration (Enhanced Pointer Precision) for true 1:1 raw input in gaming.
+  - Disable Multiplane Overlay (MPO) to prevent micro-stuttering and flickering on NVIDIA and AMD GPUs.
 - **Network Engine**:
-  - Ispezione completa degli adattatori di rete attivi, indirizzi IP locali, Gateway e DNS configurati.
-  - Strumenti rapidi a 1 clic: **Flush DNS**, **Reset Winsock**, **Reset Stack TCP/IP**.
-  - Preset DNS veloci e sicuri applicabili istantaneamente: *Cloudflare (1.1.1.1)*, *Google (8.8.8.8)*, *Quad9 (9.9.9.9)* e ripristino *DHCP automatico*.
-  - Strumento integrato di Ping diagnostico con statistiche di latenza.
+  - Complete inspection of active network adapters, local IP addresses, default gateways, and configured DNS servers.
+  - One-click network repair tools: **Flush DNS**, **Reset Winsock**, **Reset TCP/IP Stack**.
+  - Fast, secure DNS presets with instant application: *Cloudflare (1.1.1.1)*, *Google (8.8.8.8)*, *Quad9 (9.9.9.9)*, and automatic *DHCP restore*.
+  - Integrated diagnostic Ping utility with latency statistics.
 
 ---
 
-### 4. Cluster Maintenance
+### 4. Maintenance Cluster
 
 - **Storage Cleaner**:
-  - Scansione e pulizia sicura di 12 categorie di file temporanei e inutilizzati:
-    - File temporanei utente (`%TEMP%`) e di sistema (`C:\Windows\Temp`).
-    - Cache delle anteprime di Esplora Risorse (Thumbnails).
-    - Cache e dati temporanei dei browser Chromium (Google Chrome, Microsoft Edge, Brave).
-    - File di log vecchi, dump di crash di Windows Error Reporting (WER) e log del setup di Windows.
-  - Modalità Anteprima per visualizzare lo spazio recuperabile prima di procedere con l'eliminazione.
+  - Safe scanning and cleaning across 12 temporary and unneeded file categories:
+    - User temporary files (`%TEMP%`) and system temp files (`C:\Windows\Temp`).
+    - File Explorer thumbnail cache (Thumbnails).
+    - Chromium browser caches and temporary data (Google Chrome, Microsoft Edge, Brave).
+    - Legacy log files, Windows Error Reporting (WER) crash dumps, and Windows setup logs.
+  - Preview mode to review reclaimable disk space before confirming deletion.
 - **Repair Center**:
-  - Console interattiva guidata con output in streaming in tempo reale per gli strumenti di manutenzione di Windows:
-    - **Controllo File di Sistema**: `sfc /scannow` per verificare e ripristinare file di sistema corrotti.
-    - **Manutenzione Immagine Windows**: `dism /online /cleanup-image /restorehealth` per riparare il component store di Windows.
-    - **Controllo Integrità Disco**: `chkdsk` in modalità lettura o pianificazione per il riavvio successivo.
-    - **Reset Servizi Windows Update**: arresto, pulizia cartella `SoftwareDistribution` e riavvio dei servizi di aggiornamento.
+  - Interactive guided console with real-time streaming output for Windows maintenance utilities:
+    - **System File Checker**: `sfc /scannow` to detect and repair corrupt operating system files.
+    - **Windows Component Store Repair**: `dism /online /cleanup-image /restorehealth` to restore Windows image integrity.
+    - **Disk Check**: `chkdsk` in read-only mode or scheduled for the next system reboot.
+    - **Windows Update Reset**: stops services, purges `SoftwareDistribution` cache, and restarts update subsystems cleanly.
 - **Backup & Restore**:
-  - Creazione immediata di un **Punto di Ripristino del Sistema (VSS - Volume Shadow Copy)** prima di applicare modifiche massive.
-  - Gestione dei **ChangeSet**: ogni tweak modificato registra lo stato precedente in formato JSON (`data/snapshots/`), permettendo il rollback mirato a uno stato precedente.
+  - Instant creation of a **System Restore Point (VSS - Volume Shadow Copy)** prior to major adjustments.
+  - **ChangeSet Management**: every modified tweak records its previous state as JSON (`data/snapshots/`), enabling targeted rollbacks at any time.
 
 ---
 
-### 5. Cluster System
+### 5. System Cluster
 
 - **Services Manager**:
-  - Elenco completo dei servizi Windows con filtro di ricerca per nome o stato.
-  - Possibilità di avviare, arrestare, riavviare e modificare la modalità di avvio (Automatico, Manuale, Disabilitato).
+  - Comprehensive listing of Windows services with search filters by name and execution status.
+  - Start, stop, restart, and change startup type (Automatic, Manual, Disabled).
 - **Startup Manager**:
-  - Gestione trasparente dei programmi eseguiti all'avvio del computer.
-  - Ispezione delle chiavi di registro `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, `HKLM\...` e delle cartelle Startup del menu Start, con possibilità di disabilitazione senza cancellazione distruttiva.
+  - Transparent control over applications configured to launch on computer startup.
+  - Inspects `HKCU\Software\Microsoft\Windows\CurrentVersion\Run`, `HKLM\...`, and Start Menu Startup folders, supporting safe deactivation without destructive deletion.
 - **App Installer**:
-  - Catalogo curato di software open-source ed essenziale (7-Zip, Notepad++, Git, VLC, Visual Studio Code, Firefox, Chrome, Brave, Revo Uninstaller).
-  - Installazione automatica e silenziosa basata su package manager nativo (senza adware o barre degli strumenti indesiderate).
-  - **⚡ Winget Software Updates**: scansione rapida dei programmi installati nel PC con aggiornamenti disponibili e pulsante per l'aggiornamento massivo a 1 clic.
+  - Curated catalog of essential open-source and freeware software (7-Zip, Notepad++, Git, VLC, Visual Studio Code, Firefox, Chrome, Brave, Revo Uninstaller).
+  - Silent automated installation powered by native package managers (free of adware or bundled toolbars).
+  - **⚡ Winget Software Updates**: rapid scanning of installed programs with pending upgrades and one-click bulk upgrade capability.
 - **Hardware Specs**:
-  - Profilazione sub-millisecondo dell'hardware del computer: processore (modello, core, thread), scheda madre, produttore e versione BIOS, RAM fisica installata, schede video (GPU) e volumi di archiviazione.
-  - **🔋 Diagnostica Batteria**: rilevamento salute e livello di usura della batteria, cicli di carica, piano energetico attivo e generazione del report HTML ufficiale (`powercfg /batteryreport`).
+  - Sub-millisecond hardware profiling: CPU (model, physical cores, logical threads), motherboard, BIOS vendor and revision, installed physical RAM, graphics cards (GPU), and storage drives.
+  - **🔋 Battery Diagnostics**: detects battery health and wear level, cycle count, active power plan, and generates the official HTML diagnostic report (`powercfg /batteryreport`).
 - **Security Overview**:
-  - Monitoraggio dello stato in tempo reale di Microsoft Defender (servizio attivo, protezione in tempo reale attiva).
-  - Stato dei profili del Firewall di Windows (Dominio, Privato, Pubblico).
-  - Livello di notifica del Controllo dell'Account Utente (UAC).
+  - Real-time status of Microsoft Defender (antivirus service active, real-time protection enabled).
+  - Windows Firewall profiles status (Domain, Private, Public).
+  - User Account Control (UAC) notification level.
 - **Windows Features**:
-  - Interrogazione e attivazione/disattivazione dei componenti opzionali di sistema via DISM:
+  - Query and toggle optional system components via DISM:
     - Windows Sandbox
     - Windows Subsystem for Linux (WSL)
-    - Hyper-V e Piattaforma Macchina Virtuale
-    - Componenti legacy come DirectPlay e Client Telnet.
+    - Hyper-V and Virtual Machine Platform
+    - Legacy components such as DirectPlay and Telnet Client.
 - **Setup Profiles**:
-  - Salvataggio, esportazione e importazione in formato JSON di profili completi di configurazione del PC.
-  - Preset inclusi: *Gaming*, *Privacy Focus*, *Minimal*, *Standard Workstation*.
+  - Save, export, and import complete system configuration profiles in JSON format.
+  - Built-in presets: *Gaming*, *Privacy Focus*, *Minimal*, *Standard Workstation*.
 - **Unattended ISO Generator**:
-  - Generatore guidato del file `autounattend.xml` da posizionare nella radice di una chiavetta USB di installazione di Windows 10/11.
-  - Include opzioni per:
-    - Bypass automatico dei requisiti TPM 2.0, Secure Boot e RAM minima (`LabConfig`).
-    - Bypass della richiesta obbligatoria di account Microsoft (`BypassNRO`) per creare subito un account locale.
-    - Impostazione del fuso orario, lingua, nome utente e auto-logon opzionale.
+  - Guided generator for `autounattend.xml` answer files placed in the root of Windows 10/11 USB installation media.
+  - Includes options for:
+    - Automatic bypass of TPM 2.0, Secure Boot, and minimum RAM checks (`LabConfig`).
+    - Bypass of mandatory Microsoft account requirement (`BypassNRO`) to immediately create an offline local account.
+    - Timezone, language, local username configuration, and optional auto-logon.
 - **System Tools**:
-  - **Editor del File HOSTS**: visualizzazione, modifica sicura e pulsante rapido per bloccare i server di telemetria Microsoft e tracking con 1 clic.
-  - **Gestore Porte & Connessioni Socket**: ispettore live delle connessioni TCP/UDP aperte, indirizzi remoti e PID dei processi collegati.
-  - **Variabili d'Ambiente**: visualizzazione e modifica rapida delle variabili utente e di sistema.
-  - **Alias di Esecuzione (Run Aliases)**: gestione dei comandi rapidi eseguibili dalla finestra `Win + R`.
-  - **Centro Ufficiale Licenza & Attivazione**: interrogazione sicura tramite WMI `SoftwareLicensingProduct` per verificare lo stato di attivazione genuina di Windows, canale di licenza (Retail, OEM, Volume KMS), codice Product Key parziale e collegamento diretto alle Impostazioni di Sistema.
+  - **HOSTS File Editor**: view, safely edit, and apply one-click blocking rules for Microsoft telemetry and tracking endpoints.
+  - **Port & Socket Inspector**: live inspector of active TCP/UDP connections, remote addresses, and associated process IDs (PID).
+  - **Environment Variables**: quick inspection and modification of user and system environment variables.
+  - **Run Aliases**: configure shortcut commands executable directly from the `Win + R` Run dialog.
+  - **Official License & Activation Center**: safe WMI `SoftwareLicensingProduct` inspection to verify genuine Windows activation status, license channel (Retail, OEM, Volume KMS), partial product key, and direct shortcut to Windows Settings.
 
 ---
 
-## Sicurezza, Reversibilità e Rollback
+## Security, Reversibility, and Rollback
 
-SUPOptimizer è stato sviluppato seguendo rigorosi standard di sicurezza per evitare danni accidentali al sistema operativo:
+SUPOptimizer is built with rigorous safety safeguards to prevent unintended system instability:
 
-1. **Nessuna Esecuzione Arbitraria di Shell dal Frontend**:
-   - L'interfaccia HTML/JS non ha facoltà di iniettare comandi shell arbitrari. Ogni operazione passa attraverso servizi C# fortemente tipizzati e validati.
-2. **Token di Sessione Effimero (`X-SUP-Token`)**:
-   - Tutte le richieste REST inviate al server locale `127.0.0.1` sono autenticate da un token crittografico generato casualmente ad ogni avvio dell'applicazione.
-3. **Modalità Anteprima (Dry-Run)**:
-   - È possibile ispezionare le chiavi di registro esatte, i percorsi e i valori proposti prima di confermare qualsiasi modifica.
-4. **Punti di Ripristino e Snapshot JSON**:
-   - Prima di modifiche estese, SUPOptimizer può creare un punto di ripristino del sistema (*System Restore Point*) e conserva i file snapshot di rollback nella sottocartella `data/snapshots/`.
+1. **No Arbitrary Shell Execution from Frontend**:
+   - The HTML/JS UI cannot execute arbitrary shell commands. Every operation is routed through strongly typed, validated C# service methods.
+2. **Ephemeral Session Token (`X-SUP-Token`)**:
+   - All REST requests sent to the local `127.0.0.1` server require a cryptographically random token generated on each application startup.
+3. **Dry-Run / Preview Mode**:
+   - You can inspect exact registry keys, paths, and values before applying any changes.
+4. **Restore Points and JSON Snapshots**:
+   - Prior to applying bulk tweaks, SUPOptimizer can trigger a Windows System Restore Point and saves rollback snapshots to `data/snapshots/`.
 
 ---
 
-## Scorciatoie da Tastiera
+## Keyboard Shortcuts
 
-| Tasto / Scorciatoia | Funzione |
+| Key / Shortcut | Function |
 | :--- | :--- |
-| `Ctrl + K` | Apre la **Command Palette** per cercare rapidamente moduli, tweak e impostazioni |
-| `Esc` | Chiude modali attive, finestre di dialogo o la Command Palette |
-| `F5` / `Ctrl + R` | Ricarica la vista corrente e aggiorna la telemetria |
-| `Alt + ←` | Torna alla schermata precedente nella cronologia di navigazione |
-| `Alt + →` | Avanza alla schermata successiva nella cronologia di navigazione |
+| `Ctrl + K` | Opens the **Command Palette** to quickly search modules, tweaks, and settings |
+| `Esc` | Closes active modals, dialogs, or the Command Palette |
+| `F5` / `Ctrl + R` | Reloads current view and refreshes telemetry data |
+| `Alt + ←` | Navigates back in view history |
+| `Alt + →` | Navigates forward in view history |
 
 ---
 
-## Compilazione e Build Pipeline
+## Compilation and Build Pipeline
 
-Il progetto utilizza .NET 8 SDK e uno script PowerShell automatizzato che esegue pulizia, compilazione, ottimizzazione e pubblicazione a singolo file.
+The project targets .NET 8 SDK and provides an automated PowerShell script that cleans, builds, optimizes, and publishes single-file binaries.
 
-Per compilare entrambe le edizioni (*Standalone* e *Lite*):
+To compile both editions (*Standalone* and *Lite*):
 
 ```powershell
-# Dalla cartella principale del repository:
+# From the repository root:
 powershell -ExecutionPolicy Bypass -File .\build-release.ps1
 ```
 
-Gli eseguibili compilati saranno generati nella directory `dist/`:
+The resulting binaries will be placed in the `dist/` directory:
 - `dist\SUPOptimizer.exe` (Standalone, ~68.9 MB)
 - `dist\SUPOptimizer-Lite.exe` (Lite, ~2.1 MB)
 
 ---
 
-## Test e Suite di Verifica Automatica
+## Testing and Automated Verification Suite
 
-È disponibile una suite completa di test end-to-end (`test-verification.ps1`) che valida automaticamente oltre 20 aspetti funzionali del binario compilato (avvio headless, binding porte, token di sicurezza, API REST, moduli DISM, generazione XML, pulizia e shutdown ordinato).
+A comprehensive end-to-end verification suite (`test-verification.ps1`) validates over 20 functional checkpoints on the compiled binary (headless launch, port binding, security token verification, REST API responses, DISM modules, XML generation, cleanup, and graceful shutdown).
 
-Per eseguire i test:
+To run the verification suite:
 
 ```powershell
-# Esegui la verifica per l'edizione Standalone:
+# Verify the Standalone edition:
 powershell -ExecutionPolicy Bypass -File .\test-verification.ps1 -Edition Standalone
 
-# Esegui la verifica per l'edizione Lite:
+# Verify the Lite edition:
 powershell -ExecutionPolicy Bypass -File .\test-verification.ps1 -Edition Lite
 ```
 
 ---
 
-## FAQ e Risoluzione Problemi
+## FAQ and Troubleshooting
 
-### L'antivirus segnala il file come sospetto?
-Alcuni motori antivirus applicano rilevamenti euristici generici sui file eseguibili appena compilati a singolo file o su software che modificano chiavi di registro di sistema (come le impostazioni di telemetria). Il codice sorgente di SUPOptimizer è 100% trasparente, privo di payload malevoli e compilabile direttamente dal sorgente.
+### Why might antivirus software flag the binary?
+Certain antivirus engines apply generic heuristic flags to newly compiled single-file executables or software that adjusts system registry keys (such as telemetry policies). SUPOptimizer source code is 100% transparent, free of malicious payloads, and can be inspected and compiled directly from source.
 
-### Come posso ripristinare un tweak che ho applicato?
-Nella sezione **Maintenance > Backup & Restore** puoi visualizzare l'elenco dei ChangeSet precedenti e ripristinare i valori originali con un solo clic. In alternativa, puoi utilizzare i Punti di Ripristino del Sistema di Windows creati prima delle modifiche.
+### How can I undo a tweak I applied?
+Under **Maintenance > Backup & Restore**, you can view the ChangeSet history and restore original values with a single click. Alternatively, you can use the Windows System Restore Points created prior to your changes.
 
-### Posso utilizzare l'app su più computer da una chiavetta USB?
-Sì. L'edizione **Standalone** (`SUPOptimizer.exe`) contiene l'intero runtime all'interno del singolo file `.exe`: basta copiare il file su una chiavetta USB e avviarlo su qualsiasi computer con Windows 10 o Windows 11.
+### Can I run this tool on multiple PCs from a USB drive?
+Yes. The **Standalone** edition (`SUPOptimizer.exe`) bundles the complete runtime within a single `.exe` file: simply copy it to any USB thumb drive and run it on any Windows 10 or Windows 11 computer.
 
 ---
 
-## Registro Versioni e Ultime Modifiche
+## Version History and Changelog
 
-### Versione Attuale: `1.0.1` (Rilascio Ufficiale)
-*Data di rilascio: Settembre 2026*
+### Current Version: `1.0.1` (Official Release)
+*Release date: September 2026*
 
-#### Note di Rilascio & Nuove Funzionalità (v1.0.1)
-- **🪪 Centro Ufficiale Licenza & Attivazione Windows**:
-  - Integrazione dell'interrogazione nativa WMI/CIM tramite la classe di sistema `SoftwareLicensingProduct` (senza script esterni invasivi o rischi di sicurezza).
-  - Rilevamento in tempo reale dello stato genuino (*Licensed / Permanent*, *Grace Period*, *Unlicensed*), del canale di distribuzione (*Retail*, *OEM:DM*, *Volume KMS/MAK*), degli ultimi 5 caratteri del Product Key attivo (`PartialProductKey`) e dell'edizione di Windows.
-  - Pulsante a 1 clic per aprire direttamente la schermata ufficiale delle Impostazioni di Windows (`ms-settings:activation`).
-- **⚡ Purger Standby Memory / Cache RAM**:
-  - Nuovo modulo C# ad alte prestazioni basato sulle API Win32 `EmptyWorkingSet` e `GlobalMemoryStatusEx` per svuotare le working set e la memoria in standby non essenziale.
-  - Pulsante rapido integrato nella card telemetria RAM della Dashboard con notifica toast istantanea e conteggio in tempo reale dei megabyte di RAM recuperati (oltre 600 MB liberati nei test).
+#### Release Notes & New Features (v1.0.1)
+- **🪪 Official Windows License & Activation Center**:
+  - Native WMI/CIM querying via the `SoftwareLicensingProduct` system class (no external scripts or security risks).
+  - Real-time detection of genuine activation status (*Licensed / Permanent*, *Grace Period*, *Unlicensed*), distribution channel (*Retail*, *OEM:DM*, *Volume KMS/MAK*), partial product key (`PartialProductKey`), and Windows edition.
+  - One-click shortcut to launch the official Windows Activation Settings (`ms-settings:activation`).
+- **⚡ Standby Memory & RAM Cache Purger**:
+  - High-performance C# engine utilizing Win32 `EmptyWorkingSet` and `GlobalMemoryStatusEx` to purge process working sets and non-essential standby RAM.
+  - One-click quick purge button in the Dashboard RAM telemetry card with instant toast notification and reclaimed MB counter (over 600 MB freed in testing).
 - **📦 Winget Bulk Package Upgrader**:
-  - Integrazione dello scanner di aggiornamenti software basato sul motore nativo `winget upgrade`.
-  - Nuova scheda *"⚡ Software Updates"* nella sezione App Store / Installer con visualizzazione tabellare (Versione Attuale vs Nuova Versione Disponibile) e pulsante per l'aggiornamento massivo a 1 clic.
-- **🔋 Diagnostica Integrità Batteria & Piani Energetici**:
-  - Ispezione completa dell'hardware di alimentazione tramite `Win32_Battery` e `root\wmi` (capacità di fabbrica vs capacità massima attuale, percentuale di usura della batteria, cicli di carica totali e profilo energetico attivo).
-  - Generazione ed apertura automatica nel browser del report diagnostico HTML ufficiale di Windows (`powercfg /batteryreport`).
-- **📚 Documentazione & User Guide Completa**:
-  - Riscrittura integrale del file `README.md` con guida esaustiva e accessibile per tutti i 19 moduli della suite, istruzioni passo-passo per l'utente, guida alla compilazione automatizzata e FAQ di sicurezza.
-  - Aggiornamento della versione e del titolo dell'applicazione su interfaccia grafica, finestra WebView2 e menu contestuale della tray icon (`SUPOptimizer v1.0.1`).
+  - Integrated software update scanner powered by native `winget upgrade`.
+  - Added *"⚡ Software Updates"* tab in App Store / Installer with side-by-side version comparison (Installed vs Available) and one-click bulk upgrade button.
+- **🔋 Battery Health Diagnostics & Power Plans**:
+  - Comprehensive battery hardware analysis via `Win32_Battery` and `root\wmi` (design capacity vs current full capacity, wear level percentage, total charge cycles, and active power plan).
+  - Automated generation and browser preview of the official Windows HTML battery report (`powercfg /batteryreport`).
+- **📚 Comprehensive User Guide & Documentation**:
+  - Completely rewritten `README.md` with in-depth documentation for all 19 suite modules, step-by-step user guidance, automated compilation instructions, and security FAQs.
+  - Synchronized application title and version badges across the UI, WebView2 window, and system tray context menu (`SUPOptimizer v1.0.1`).
 
 ---
 
 <div align="center">
-  <sub>SUPOptimizer v1.0.1 — Sviluppato con passione per la trasparenza, la privacy e le prestazioni di Windows.</sub>
+  <sub>SUPOptimizer v1.0.1 — Built with dedication to Windows transparency, privacy, and performance.</sub>
 </div>
