@@ -59,10 +59,10 @@ try {
     $html = $webResp.Content
 
     # Check Sidebar & Brand Markup
-    if ($html.Contains('class="brand-title">SUPOptimizer</span>') -and $html.Contains('class="brand-badge">v1.0.1</span>')) {
-        Write-Host "      [OK] Brand title verified: SUPOptimizer v1.0.1" -ForegroundColor Green
+    if ($html.Contains('class="brand-title">SUPOptimizer</span>') -and $html.Contains('class="brand-badge">v1.0.2</span>')) {
+        Write-Host "      [OK] Brand title verified: SUPOptimizer v1.0.2" -ForegroundColor Green
     } else {
-        throw "Brand title markup or v1.0.1 badge missing in HTML!"
+        throw "Brand title markup or v1.0.2 badge missing in HTML!"
     }
 
     if ($html.Contains('class="app-sidebar"')) {

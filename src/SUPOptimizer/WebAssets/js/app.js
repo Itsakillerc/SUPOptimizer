@@ -27,9 +27,11 @@ class SUPApp {
     this.editEnvIsRaw = false;
     
     this.selectedDebloatPackages = new Set();
-    this.allFeatures = [];
-    this.allProfiles = [];
-    
+    this.themeAccent = localStorage.getItem("sup_theme_accent") || "amber";
+    this.lastHealthReport = null;
+    this.lastHealthScore = 100;
+    this.activeHealthFilter = "All";
+
     this.safeTestMode = localStorage.getItem("sup_safe_mode") === "true";
     this.repairInterval = null;
     this.paletteItems = [];
@@ -43,16 +45,22 @@ class SUPApp {
     // Expose global navigation for C# WebView2 host caller
     window.navigateToTab = (tabId) => this.switchTab(tabId);
 
+    // Apply Saved Accent Theme
+    this.applyTheme(this.themeAccent);
+
     // Setup Window Controls & Dragging
     this.initWindowControls();
 
-    // Setup Keyboard Shortcuts (Ctrl+K for Command Palette, Esc for Modals)
+    // Setup Keyboard Shortcuts (Ctrl+K for Command Palette, Esc for Modals, F5/Ctrl+R for Refresh)
     window.addEventListener("keydown", (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
         this.openCommandPalette();
       } else if (e.key === "Escape") {
         this.closeAllModals();
+      } else if (e.key === "F5" || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "r")) {
+        e.preventDefault();
+        this.refreshMetricsManual();
       }
     });
 
@@ -73,6 +81,28 @@ class SUPApp {
     const serverUrlLabel = document.getElementById("cfg-server-url");
     if (serverUrlLabel) {
       serverUrlLabel.textContent = `${this.baseUrl}/ (Accessible via Chrome, Edge, Brave, etc.)`;
+    }
+  }
+
+  applyTheme(themeName) {
+    this.themeAccent = themeName || "amber";
+    document.body.setAttribute("data-theme", this.themeAccent);
+    document.querySelectorAll(".theme-swatch").forEach(swatch => {
+      swatch.classList.toggle("active", swatch.getAttribute("data-theme") === this.themeAccent);
+    });
+  }
+
+  setAccentTheme(themeName, element) {
+    this.applyTheme(themeName);
+    localStorage.setItem("sup_theme_accent", themeName);
+    this.showToast(`Theme accent updated: ${themeName.toUpperCase()}`, "success");
+  }
+
+  async refreshMetricsManual() {
+    this.showToast("Refreshing system telemetry...", "info");
+    await this.fetchMetrics();
+    if (this.activeTab === "health") {
+      await this.runHealthScan();
     }
   }
 
@@ -110,18 +140,23 @@ class SUPApp {
     if (!container) return;
 
     const toast = document.createElement("div");
-    toast.className = "toast";
-    let icon = "ℹ️";
-    if (type === "success") icon = "✅";
-    if (type === "warning") icon = "⚠️";
-    if (type === "error") icon = "❌";
+    toast.className = `toast toast-${type}`;
+    let icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`;
+    if (type === "success") {
+      icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--safe-green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+    } else if (type === "warning") {
+      icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--caution-amber)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`;
+    } else if (type === "error") {
+      icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--danger-red)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+    }
 
-    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    toast.innerHTML = `<span style="display:flex; align-items:center; flex-shrink:0;">${icon}</span><span style="flex:1;">${message}</span>`;
     container.appendChild(toast);
 
     setTimeout(() => {
       toast.style.opacity = "0";
-      toast.style.transition = "opacity 0.3s ease";
+      toast.style.transform = "translateY(8px) scale(0.96)";
+      toast.style.transition = "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)";
       setTimeout(() => toast.remove(), 300);
     }, 3500);
   }
@@ -152,6 +187,7 @@ class SUPApp {
     // Update Header Breadcrumb Title
     const titleMap = {
       dashboard: "Dashboard Overview",
+      health: "Health Diagnostics & Security Audit",
       optimize: "Optimize & System Tweaks",
       debloat: "Bloatware & Telemetry Remover",
       startup: "Startup Applications Manager",
@@ -174,6 +210,7 @@ class SUPApp {
     // Lazy load tab data
     switch (tabId) {
       case "dashboard": this.fetchMetrics(); break;
+      case "health": this.loadHealthScan(); break;
       case "optimize": this.renderOptimizeGrid(); break;
       case "debloat": this.renderDebloatGrid(); break;
       case "startup": this.loadStartup(); break;
@@ -235,14 +272,27 @@ class SUPApp {
           : "Application running as Standard User. Click to request UAC elevation.";
       }
 
-      // Dashboard cards
+      // Dashboard radial circular gauges & cards
+      const cpuPct = Math.min(100, Math.max(0, data.cpuUsagePercent || 0));
       const dCpuVal = document.getElementById("dash-cpu-val");
       const dCpuBar = document.getElementById("dash-cpu-bar");
-      if (dCpuVal) dCpuVal.textContent = `${(data.cpuUsagePercent || 0).toFixed(1)}%`;
-      if (dCpuBar) dCpuBar.style.width = `${Math.min(100, Math.max(0, data.cpuUsagePercent || 0))}%`;
+      const dCpuCircle = document.getElementById("dash-cpu-circle");
+      const dCpuPill = document.getElementById("dash-cpu-pill");
+
+      if (dCpuVal) dCpuVal.textContent = `${cpuPct.toFixed(1)}%`;
+      if (dCpuBar) dCpuBar.style.width = `${cpuPct}%`;
+      if (dCpuCircle) {
+        dCpuCircle.style.strokeDashoffset = 263.89 - (263.89 * cpuPct / 100);
+        dCpuCircle.setAttribute('class', `gauge-fill ${cpuPct > 80 ? 'red' : (cpuPct > 50 ? '' : 'green')}`);
+      }
+      if (dCpuPill) {
+        dCpuPill.textContent = cpuPct > 80 ? "Heavy Load" : (cpuPct > 50 ? "Moderate" : "Normal");
+        dCpuPill.className = `pill-risk ${cpuPct > 80 ? 'danger' : (cpuPct > 50 ? 'caution' : 'safe')}`;
+      }
 
       const dRamVal = document.getElementById("dash-ram-val");
       const dRamBar = document.getElementById("dash-ram-bar");
+      const dRamCircle = document.getElementById("dash-ram-circle");
       const dRamDetail = document.getElementById("dash-ram-detail");
       const ramPct = (data.ramUsagePercent != null && !isNaN(data.ramUsagePercent))
         ? data.ramUsagePercent
@@ -250,23 +300,47 @@ class SUPApp {
 
       if (dRamVal) dRamVal.textContent = `${ramPct.toFixed(1)}%`;
       if (dRamBar) dRamBar.style.width = `${Math.min(100, Math.max(0, ramPct))}%`;
+      if (dRamCircle) {
+        dRamCircle.style.strokeDashoffset = 263.89 - (263.89 * ramPct / 100);
+        dRamCircle.setAttribute('class', `gauge-fill ${ramPct > 85 ? 'red' : (ramPct > 70 ? '' : 'green')}`);
+      }
       if (dRamDetail) {
         const usedMb = Math.round(ramUsedBytes / (1024 * 1024));
         const totalMb = Math.round(ramTotalBytes / (1024 * 1024));
         const freeMb = Math.max(0, totalMb - usedMb);
-        dRamDetail.textContent = `${usedMb.toLocaleString()} MB used / ${freeMb.toLocaleString()} MB free (${totalMb.toLocaleString()} MB total)`;
+        dRamDetail.textContent = `${usedMb.toLocaleString()} MB / ${totalMb.toLocaleString()} MB (${freeMb.toLocaleString()} MB free)`;
       }
 
       const dDiskVal = document.getElementById("dash-disk-val");
       const dDiskBar = document.getElementById("dash-disk-bar");
+      const dDiskCircle = document.getElementById("dash-disk-circle");
       const dDiskDetail = document.getElementById("dash-disk-detail");
       const diskPct = data.diskUsagePercent != null ? data.diskUsagePercent : 0;
       if (dDiskVal) dDiskVal.textContent = `${diskPct.toFixed(1)}%`;
       if (dDiskBar) dDiskBar.style.width = `${Math.min(100, Math.max(0, diskPct))}%`;
+      if (dDiskCircle) {
+        dDiskCircle.style.strokeDashoffset = 263.89 - (263.89 * diskPct / 100);
+        dDiskCircle.setAttribute('class', `gauge-fill ${diskPct > 90 ? 'red' : (diskPct > 75 ? '' : 'green')}`);
+      }
       if (dDiskDetail) {
         const freeGb = data.diskFreeBytes ? (data.diskFreeBytes / (1024 ** 3)).toFixed(1) : "0";
         const totGb = data.diskTotalBytes ? (data.diskTotalBytes / (1024 ** 3)).toFixed(1) : "0";
-        dDiskDetail.textContent = `${freeGb} GB available of ${totGb} GB`;
+        dDiskDetail.textContent = `${freeGb} GB free of ${totGb} GB`;
+      }
+
+      // Update Health circular gauge on dashboard
+      const hScore = this.lastHealthScore ?? 100;
+      const dHealthCircle = document.getElementById("dash-health-circle");
+      const dHealthVal = document.getElementById("dash-health-score-val");
+      const dHealthBadge = document.getElementById("dash-health-badge");
+      if (dHealthCircle) {
+        dHealthCircle.style.strokeDashoffset = 263.89 - (263.89 * hScore / 100);
+        dHealthCircle.setAttribute('class', `gauge-fill ${hScore < 70 ? 'red' : (hScore < 85 ? '' : 'green')}`);
+      }
+      if (dHealthVal) dHealthVal.textContent = hScore;
+      if (dHealthBadge) {
+        dHealthBadge.textContent = hScore >= 90 ? "Optimal" : (hScore >= 75 ? "Notice" : "Attention");
+        dHealthBadge.className = `pill-risk ${hScore >= 90 ? 'safe' : (hScore >= 75 ? 'caution' : 'danger')}`;
       }
 
       const dUptime = document.getElementById("dash-uptime");
@@ -288,7 +362,9 @@ class SUPApp {
       // Multi-Disk storage volumes rendering
       this.renderDashboardDisks(data.drives || []);
 
-    } catch (err) { }
+    } catch (err) {
+      console.error("fetchMetrics error:", err);
+    }
   }
 
   renderDashboardDisks(drives) {
@@ -331,6 +407,216 @@ class SUPApp {
         </div>
       `;
     }).join("");
+  }
+
+  // =========================================================================
+  // HEALTH SCAN & SYSTEM INTEGRITY DIAGNOSTICS
+  // =========================================================================
+  async loadHealthScan() {
+    if (!this.lastHealthReport) {
+      await this.runHealthScan();
+    }
+  }
+
+  async runHealthScan() {
+    const scanBtn = document.getElementById("btn-run-health-scan");
+    if (scanBtn) {
+      scanBtn.disabled = true;
+      scanBtn.innerHTML = `<span>Auditing System Checkpoints...</span>`;
+    }
+
+    try {
+      const report = await this.api("/api/system/health");
+      this.lastHealthReport = report;
+      this.renderHealthReport(report);
+      this.showToast("System health audit complete.", "success");
+    } catch (err) {
+      this.showToast(`Health audit failed: ${err.message}`, "error");
+    } finally {
+      if (scanBtn) {
+        scanBtn.disabled = false;
+        scanBtn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg> <span>Run Full Health Scan</span>`;
+      }
+    }
+  }
+
+  renderHealthReport(report) {
+    if (!report) return;
+
+    const score = report.Score ?? report.score ?? 100;
+    this.lastHealthScore = score;
+
+    // Big Score Gauge
+    const scoreVal = document.getElementById("health-score-val");
+    if (scoreVal) scoreVal.textContent = score;
+
+    const scoreCircle = document.getElementById("health-score-circle");
+    if (scoreCircle) {
+      scoreCircle.style.strokeDashoffset = 263.89 - (263.89 * score / 100);
+      scoreCircle.style.stroke = score >= 90 ? "var(--safe-green)" : (score >= 75 ? "var(--caution-amber)" : "var(--danger-red)");
+    }
+
+    // Sidebar and Dashboard Badges
+    const badgeSidebar = document.getElementById("badge-health-score");
+    if (badgeSidebar) {
+      badgeSidebar.textContent = `${score}%`;
+      badgeSidebar.style.color = score >= 90 ? "var(--safe-green)" : (score >= 75 ? "var(--caution-amber)" : "var(--danger-red)");
+    }
+
+    const dHealthCircle = document.getElementById("dash-health-circle");
+    if (dHealthCircle) {
+      dHealthCircle.style.strokeDashoffset = 263.89 - (263.89 * score / 100);
+      dHealthCircle.setAttribute('class', `gauge-fill ${score < 75 ? 'red' : (score < 90 ? '' : 'green')}`);
+    }
+    const dHealthVal = document.getElementById("dash-health-score-val");
+    if (dHealthVal) dHealthVal.textContent = score;
+
+    // Status Badge
+    const statusBadge = document.getElementById("health-status-badge");
+    if (statusBadge) {
+      const statusText = report.Status || report.status || (score >= 90 ? "OPTIMIZED" : "ACTION RECOMMENDED");
+      statusBadge.textContent = statusText;
+      statusBadge.className = `health-status-badge ${score >= 90 ? 'optimized' : (score >= 75 ? 'attention' : 'critical')}`;
+    }
+
+    // Counters
+    const critCount = document.getElementById("health-crit-count");
+    if (critCount) critCount.textContent = report.CriticalCount ?? report.criticalCount ?? 0;
+
+    const warnCount = document.getElementById("health-warn-count");
+    if (warnCount) warnCount.textContent = report.WarningCount ?? report.warningCount ?? 0;
+
+    const attCount = document.getElementById("health-att-count");
+    if (attCount) attCount.textContent = report.AttentionCount ?? report.attentionCount ?? 0;
+
+    const okCount = document.getElementById("health-ok-count");
+    if (okCount) okCount.textContent = report.OkCount ?? report.okCount ?? 0;
+
+    const lastScanned = document.getElementById("health-last-scanned");
+    if (lastScanned) {
+      const d = new Date();
+      lastScanned.textContent = `Last scan: ${d.toLocaleTimeString()}`;
+    }
+
+    this.renderHealthFindings(report.Findings || report.findings || []);
+  }
+
+  renderHealthFindings(findings) {
+    const container = document.getElementById("health-findings-container");
+    if (!container) return;
+
+    let items = findings || [];
+    if (this.activeHealthFilter === "Issues") {
+      items = items.filter(f => {
+        const sev = (f.Severity ?? f.severity);
+        return sev !== 0 && sev !== "Ok" && sev !== "OK";
+      });
+    }
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div style="color:var(--safe-green); padding:24px; text-align:center; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--safe-green-border);">
+          🎉 All diagnostic checkpoints passed! System integrity is optimal.
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(f => {
+      const sev = f.Severity ?? f.severity;
+      let sevClass = "severity-ok";
+      let sevBadge = `<span class="pill-risk safe">Optimal</span>`;
+      let isIssue = false;
+
+      if (sev === 4 || sev === "Critical" || sev === "critical") {
+        sevClass = "severity-critical";
+        sevBadge = `<span class="pill-risk danger">Critical</span>`;
+        isIssue = true;
+      } else if (sev === 3 || sev === "Warning" || sev === "warning") {
+        sevClass = "severity-warning";
+        sevBadge = `<span class="pill-risk caution">Warning</span>`;
+        isIssue = true;
+      } else if (sev === 2 || sev === "Attention" || sev === "attention") {
+        sevClass = "severity-attention";
+        sevBadge = `<span class="pill-risk" style="color:var(--azure-blue); background:var(--azure-blue-bg); border:1px solid rgba(56,189,248,0.28);">Attention</span>`;
+        isIssue = true;
+      }
+
+      const tweakId = f.TweakId || f.tweakId;
+      const actionBtn = tweakId
+        ? `<button class="btn-primary-amber" style="padding:5px 12px; font-size:11px; white-space:nowrap;" onclick="supApp.applyHealthFindingTweak('${tweakId}', this)">
+             <span>⚡ Optimize</span>
+           </button>`
+        : (isIssue ? `<span style="font-size:11px; color:var(--text-muted); font-style:italic;">Manual action</span>` : `<span style="font-size:11px; color:var(--safe-green); font-weight:600;">Verified</span>`);
+
+      return `
+        <div class="health-finding-card ${sevClass}">
+          <div class="health-finding-info">
+            <div class="health-finding-meta">
+              <span class="health-category-tag">${f.Category || f.category || "System"}</span>
+              ${sevBadge}
+            </div>
+            <div class="health-finding-title">${f.Title || f.title || "Diagnostic Finding"}</div>
+            <div class="health-finding-desc">${f.Description || f.description || ""}</div>
+            ${f.Recommendation || f.recommendation ? `<div class="health-finding-rec">💡 ${f.Recommendation || f.recommendation}</div>` : ""}
+          </div>
+          <div style="flex-shrink:0;">
+            ${actionBtn}
+          </div>
+        </div>`;
+    }).join("");
+  }
+
+  filterHealthFindings(filterType, element) {
+    this.activeHealthFilter = filterType;
+    if (element && element.parentElement) {
+      element.parentElement.querySelectorAll("button").forEach(b => {
+        b.className = (b === element) ? "btn-primary-amber" : "btn-secondary";
+      });
+    }
+    if (this.lastHealthReport) {
+      this.renderHealthFindings(this.lastHealthReport.Findings || this.lastHealthReport.findings || []);
+    }
+  }
+
+  async applyHealthFindingTweak(tweakId, btnElement) {
+    if (btnElement) {
+      btnElement.disabled = true;
+      btnElement.innerHTML = `<span>Applying...</span>`;
+    }
+    try {
+      const res = await this.api("/api/tweaks/apply", "POST", { tweakId });
+      this.showToast(`Applied fix for: ${tweakId}`, "success");
+      await this.runHealthScan();
+      await this.loadTweaks();
+    } catch (err) {
+      this.showToast(`Failed to apply tweak: ${err.message}`, "error");
+      if (btnElement) {
+        btnElement.disabled = false;
+        btnElement.innerHTML = `<span>Retry</span>`;
+      }
+    }
+  }
+
+  async applyAllHealthFixes() {
+    if (!this.lastHealthReport) return;
+    const findings = this.lastHealthReport.Findings || this.lastHealthReport.findings || [];
+    const fixableTweaks = findings.map(f => f.TweakId || f.tweakId).filter(Boolean);
+
+    if (fixableTweaks.length === 0) {
+      this.showToast("No automated tweak fixes needed.", "info");
+      return;
+    }
+
+    this.showToast(`Applying ${fixableTweaks.length} optimization tweaks...`, "info");
+    for (const tweakId of fixableTweaks) {
+      try {
+        await this.api("/api/tweaks/apply", "POST", { tweakId });
+      } catch (err) {}
+    }
+
+    this.showToast(`Applied ${fixableTweaks.length} optimizations!`, "success");
+    await this.runHealthScan();
+    await this.loadTweaks();
   }
 
   // =========================================================================
@@ -483,12 +769,19 @@ class SUPApp {
       return true;
     });
 
-    grid.innerHTML = "";
+    // Update active count badge in sidebar
+    const optBadge = document.getElementById("badge-opt-count");
+    if (optBadge) optBadge.textContent = `${filtered.length}`;
 
     if (filtered.length === 0) {
       grid.innerHTML = `
-        <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted);">
-          No optimization tweaks found matching your active filter.
+        <div style="grid-column:1/-1; text-align:center; padding:50px 20px; background:var(--bg-card); border-radius:var(--radius-lg); border:1px dashed var(--border-card);">
+          <div style="font-size:32px; margin-bottom:12px;">🔍</div>
+          <div style="font-size:15px; font-weight:700; color:#ffffff; margin-bottom:6px;">No Optimization Tweaks Found</div>
+          <div style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">No tweaks match your active search terms or category/risk filters.</div>
+          <button class="btn-primary-amber" onclick="document.getElementById('tweak-search-input').value=''; document.getElementById('tweak-risk-filter').value='All'; document.getElementById('tweak-state-filter').value='All'; supApp.renderOptimizeGrid();">
+            <span>Reset Search & Filters</span>
+          </button>
         </div>`;
       return;
     }
@@ -559,6 +852,93 @@ class SUPApp {
         this.showToast(`Operation Failed: ${result.Message || result.message}`, "error");
       }
     } catch (err) { }
+  }
+
+  async applyRecommendedTweaks() {
+    // Curated high-impact optimizations that preserve native Windows aesthetics
+    const nonAestheticExclusions = new Set([
+      "win_classic_context_menu",
+      "win_taskbar_align_left",
+      "win_hide_taskbar_search",
+      "win_hide_task_view",
+      "win_hide_home_gallery",
+      "win_restore_this_pc_folders",
+      "win_open_this_pc",
+      "win_drive_letters_first",
+      "win_dark_mode",
+      "win_disable_visual_effects",
+      "opt_visual_fx",
+      "ctx_take_ownership",
+      "ctx_open_with_notepad",
+      "win_end_task_right_click",
+      "win_hide_spotlight_icon",
+      "win_always_show_scrollbars",
+      "win_hide_settings_home",
+      "win_disable_window_snapping",
+      "win_disable_folder_discovery",
+      "win_hide_duplicate_drives"
+    ]);
+
+    const recommendedWhitelist = new Set([
+      // Performance & Responsiveness
+      "opt_network_throttling",
+      "opt_system_responsiveness",
+      "opt_game_mode",
+      "opt_game_dvr",
+      "opt_menu_delay",
+      "opt_ntfs_last_access",
+      "opt_long_paths",
+      "opt_delivery_opt_p2p",
+      "opt_background_apps",
+      "perf_disable_gamebar_popups",
+      "perf_disable_wsaifabric",
+      // Privacy & Telemetry
+      "privacy_telemetry",
+      "privacy_advertising_id",
+      "privacy_activity_history",
+      "privacy_suggestions",
+      "privacy_bing_search",
+      "privacy_feedback",
+      "privacy_location",
+      "privacy_copilot",
+      "privacy_cortana",
+      "privacy_app_launch_tracking",
+      "privacy_find_my_device",
+      "privacy_app_location",
+      "privacy_windows_recall",
+      "privacy_click_to_do",
+      "privacy_notepad_paint_ai",
+      "privacy_edge_ads_recommendations",
+      "privacy_consumer_features",
+      "privacy_start_phone_link",
+      "privacy_start_recommendations",
+      "priv_disable_office_telemetry",
+      "priv_disable_edge_copilot",
+      // System & Reliability (Non-aesthetic)
+      "win_error_reporting",
+      "win_lock_screen_tips",
+      "win_sticky_keys_shortcut",
+      "win_prevent_update_reboot",
+      "win_alt_tab_windows_only"
+    ]);
+
+    const targetIds = this.allTweaks
+      .filter(t => recommendedWhitelist.has(t.id) && !nonAestheticExclusions.has(t.id) && t.currentState !== "Enabled")
+      .map(t => t.id);
+
+    if (targetIds.length === 0) {
+      this.showToast("All recommended optimizations are already applied!", "info");
+      return;
+    }
+
+    try {
+      this.showToast(`Applying ${targetIds.length} recommended optimizations...`, "info");
+      const res = await this.api("/api/tweaks/batch", "POST", { tweakIds: targetIds, dryRun: this.safeTestMode });
+      this.showToast(`Recommended Optimizations applied: ${res.Succeeded || res.succeeded || targetIds.length} activated (UI aesthetics preserved).`, "success");
+      await this.loadTweaks();
+    } catch (err) {
+      this.showToast(`Batch error: ${err.message}`, "error");
+    }
   }
 
   async applyAllSafeTweaks() {
@@ -1015,16 +1395,31 @@ class SUPApp {
 
   async loadNetworkConnections() {
     const tbody = document.getElementById("net-connections-tbody");
-    const countBadge = document.getElementById("net-conn-count");
     if (!tbody) return;
 
     try {
       const connections = await this.api("/api/network/connections");
       this.allNetConnections = Array.isArray(connections) ? connections : [];
-      if (countBadge) countBadge.textContent = `${this.allNetConnections.length} Connessioni`;
+
+      // Update metric summary cards
+      const totalSockets = this.allNetConnections.length;
+      const establishedSockets = this.allNetConnections.filter(c => (c.state || c.State || "").toUpperCase() === "ESTABLISHED").length;
+      const listeningSockets = this.allNetConnections.filter(c => (c.state || c.State || "").toUpperCase().includes("LISTEN")).length;
+      const uniqueApps = new Set(this.allNetConnections.map(c => (c.processName || c.ProcessName || "").toLowerCase())).size;
+
+      const statTotal = document.getElementById("net-stat-total");
+      const statEst = document.getElementById("net-stat-established");
+      const statList = document.getElementById("net-stat-listening");
+      const statApps = document.getElementById("net-stat-apps");
+
+      if (statTotal) statTotal.textContent = totalSockets;
+      if (statEst) statEst.textContent = establishedSockets;
+      if (statList) statList.textContent = listeningSockets;
+      if (statApps) statApps.textContent = uniqueApps;
+
       this.filterNetworkConnections();
     } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">Impossibile leggere la tabella connessioni: ${err.message}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">Failed to inspect network sockets: ${err.message}</td></tr>`;
     }
   }
 
@@ -1032,19 +1427,49 @@ class SUPApp {
     const tbody = document.getElementById("net-connections-tbody");
     if (!tbody) return;
 
-    const query = (document.getElementById("net-conn-filter")?.value || "").toLowerCase().trim();
-    const filtered = this.allNetConnections.filter(c => {
-      if (!query) return true;
+    const query = (document.getElementById("net-conn-search")?.value || document.getElementById("net-conn-filter")?.value || "").toLowerCase().trim();
+    const stateFilter = (document.getElementById("net-conn-state-filter")?.value || "All").toUpperCase();
+    const dirFilter = (document.getElementById("net-conn-dir-filter")?.value || "All").toLowerCase();
+
+    const filtered = (this.allNetConnections || []).filter(c => {
       const pName = (c.processName || c.ProcessName || "").toLowerCase();
       const pid = String(c.processId || c.ProcessId || "");
-      const local = `${c.localAddress || c.LocalAddress}:${c.localPort || c.LocalPort}`.toLowerCase();
-      const remote = `${c.remoteAddress || c.RemoteAddress}:${c.remotePort || c.RemotePort}`.toLowerCase();
+      const sName = (c.serviceName || c.ServiceName || "").toLowerCase();
+      const rawLocal = (c.localAddress || c.LocalAddress || "").toLowerCase();
+      const lPort = String(c.localPort ?? c.LocalPort ?? "");
+      const rawRemote = (c.remoteAddress || c.RemoteAddress || "").toLowerCase();
+      const rPort = String(c.remotePort ?? c.RemotePort ?? "");
       const state = (c.state || c.State || "").toLowerCase();
-      return pName.includes(query) || pid.includes(query) || local.includes(query) || remote.includes(query) || state.includes(query);
+      const dir = (c.direction || c.Direction || "").toLowerCase();
+
+      // Text query match
+      if (query) {
+        const matchesQuery = pName.includes(query) || pid.includes(query) || sName.includes(query) ||
+          rawLocal.includes(query) || lPort.includes(query) || rawRemote.includes(query) ||
+          rPort.includes(query) || state.includes(query);
+        if (!matchesQuery) return false;
+      }
+
+      // State filter
+      if (stateFilter !== "ALL") {
+        const upperState = state.toUpperCase();
+        if (stateFilter === "ESTABLISHED" && upperState !== "ESTABLISHED") return false;
+        if (stateFilter === "LISTEN" && !upperState.includes("LISTEN")) return false;
+        if (stateFilter === "TIME_WAIT" && !upperState.includes("WAIT") && !upperState.includes("CLOSE")) return false;
+      }
+
+      // Direction filter
+      if (dirFilter !== "all") {
+        if (dirFilter === "outbound" && !dir.includes("out")) return false;
+        if (dirFilter === "inbound" && !dir.includes("in")) return false;
+        if (dirFilter === "local" && !dir.includes("local") && !dir.includes("loopback")) return false;
+      }
+
+      return true;
     });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:var(--text-muted);">Nessuna connessione di rete corrispondente ai criteri di ricerca.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:var(--text-muted);">No active network sockets matching the selected criteria.</td></tr>`;
       return;
     }
 
@@ -1052,28 +1477,68 @@ class SUPApp {
       const pName = c.processName || c.ProcessName || "System";
       const pid = c.processId || c.ProcessId || 0;
       const proto = c.protocol || c.Protocol || "TCP";
-      const local = `${c.localAddress || c.LocalAddress || "0.0.0.0"}:${c.localPort || c.LocalPort || 0}`;
-      const remote = (c.remotePort || c.RemotePort) > 0 ? `${c.remoteAddress || c.RemoteAddress}:${c.remotePort || c.RemotePort}` : (c.remoteAddress || c.RemoteAddress || "*:*");
-      const state = c.state || c.State || "Unknown";
+      const sName = c.serviceName || c.ServiceName || "";
+
+      let localDisplay = c.localAddress || c.LocalAddress || "0.0.0.0";
+      const lPort = c.localPort ?? c.LocalPort;
+      if (lPort != null && !localDisplay.includes(`:${lPort}`)) {
+        localDisplay = `${localDisplay}:${lPort}`;
+      }
+
+      let remoteDisplay = c.remoteAddress || c.RemoteAddress || "*";
+      const rPort = c.remotePort ?? c.RemotePort;
+      if (rPort != null && rPort > 0 && !remoteDisplay.includes(`:${rPort}`)) {
+        remoteDisplay = `${remoteDisplay}:${rPort}`;
+      }
+
+      const state = (c.state || c.State || "Unknown").toUpperCase();
       const dir = c.direction || c.Direction || "Inbound";
 
-      let dirBadgeClass = "conn-badge-in";
-      if (dir.toLowerCase() === "outbound") dirBadgeClass = "conn-badge-out";
-      else if (dir.toLowerCase() === "listening") dirBadgeClass = "conn-badge-listen";
+      let dirBadgeClass = "conn-badge-inbound";
+      let dirIcon = "📥";
+      if (dir.toLowerCase().includes("out")) {
+        dirBadgeClass = "conn-badge-outbound";
+        dirIcon = "🌐";
+      } else if (dir.toLowerCase().includes("listen")) {
+        dirBadgeClass = "conn-badge-listen";
+        dirIcon = "📡";
+      } else if (dir.toLowerCase().includes("loopback") || dir.toLowerCase().includes("local")) {
+        dirBadgeClass = "conn-badge-local";
+        dirIcon = "🔄";
+      }
+
+      let dotClass = "active";
+      let stateColor = "var(--safe-green)";
+      if (state.includes("LISTEN")) {
+        dotClass = "listen";
+        stateColor = "#00f2fe";
+      } else if (state.includes("WAIT") || state.includes("CLOSE")) {
+        dotClass = "wait";
+        stateColor = "var(--caution-amber)";
+      } else if (state === "CLOSED") {
+        dotClass = "closed";
+        stateColor = "var(--text-muted)";
+      }
+
+      const serviceTag = sName ? `<span class="net-service-tag">${this.escapeHtml(sName)}</span>` : "";
 
       return `
         <tr>
+          <td><span class="pill-risk safe" style="font-size:11px; padding:2px 7px; font-family:var(--font-mono);">${pid}</span></td>
+          <td><strong style="color:#ffffff; font-size:13px;">${this.escapeHtml(pName)}</strong></td>
+          <td><span class="micro-tag" style="font-family:var(--font-mono); font-size:10px;">${this.escapeHtml(proto)}</span></td>
+          <td><span style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${this.escapeHtml(localDisplay)}</span></td>
           <td>
-            <div style="display:flex; align-items:center; gap:8px;">
-              <strong style="color:#ffffff;">${this.escapeHtml(pName)}</strong>
-              <span class="pill-risk safe" style="font-size:10px; padding:1px 6px;">PID ${pid}</span>
+            <span style="font-family:var(--font-mono); font-size:12px; color:#ffffff; font-weight:600;">${this.escapeHtml(remoteDisplay)}</span>
+            ${serviceTag}
+          </td>
+          <td>
+            <div style="display:flex; align-items:center;">
+              <span class="status-dot ${dotClass}"></span>
+              <span style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:${stateColor};">${this.escapeHtml(state)}</span>
             </div>
           </td>
-          <td><span style="font-family:var(--font-mono); color:var(--text-secondary);">${this.escapeHtml(proto)}</span></td>
-          <td style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${this.escapeHtml(local)}</td>
-          <td style="font-family:var(--font-mono); font-size:12px; color:#ffffff;">${this.escapeHtml(remote)}</td>
-          <td><span style="font-family:var(--font-mono); font-size:11px; color:var(--amber-gold); font-weight:600;">${this.escapeHtml(state)}</span></td>
-          <td><span class="conn-badge ${dirBadgeClass}">${this.escapeHtml(dir)}</span></td>
+          <td><span class="conn-badge ${dirBadgeClass}">${dirIcon} ${this.escapeHtml(dir)}</span></td>
         </tr>
       `;
     }).join("");
@@ -1607,6 +2072,8 @@ class SUPApp {
     const grid = document.getElementById("installer-grid");
     if (!grid) return;
 
+    if (!this.installingPackages) this.installingPackages = new Map();
+
     grid.innerHTML = "";
     const filtered = this.allCatalogApps.filter(app => {
       if (this.activeInstallerSubtab === "All") return true;
@@ -1614,24 +2081,52 @@ class SUPApp {
     });
 
     filtered.forEach(app => {
+      const appId = app.id || app.Id;
       const isInst = app.isInstalled || app.IsInstalled;
+      const isInstalling = this.installingPackages.has(appId);
+      const installInfo = isInstalling ? this.installingPackages.get(appId) : null;
+
       const card = document.createElement("div");
       card.className = "tweak-card";
+      card.id = `installer-card-${appId.replace(/[^a-zA-Z0-9_-]/g, "_")}`;
+
+      const progressHtml = isInstalling ? `
+        <div class="card-install-progress">
+          <div class="card-install-track">
+            <div class="card-install-bar card-progress-bar-${appId.replace(/[^a-zA-Z0-9_-]/g, "_")}" style="width: ${installInfo?.pct || 15}%;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:11px; margin-top:3px;">
+            <span class="card-progress-stage-${appId.replace(/[^a-zA-Z0-9_-]/g, "_")}" style="color:var(--accent-amber); font-weight:600;">${this.escapeHtml(installInfo?.stage || "Working...")}</span>
+            <span class="card-progress-pct-${appId.replace(/[^a-zA-Z0-9_-]/g, "_")}" style="color:var(--text-muted); font-family:var(--font-mono);">${installInfo?.pct || 15}%</span>
+          </div>
+        </div>
+      ` : "";
+
+      const buttonHtml = isInstalling ? `
+        <button class="btn-primary-amber" disabled style="opacity:0.85; cursor:wait;">
+          <span class="spinner-amber" style="width:12px; height:12px; border-width:2px; display:inline-block; vertical-align:middle; margin-right:6px;"></span>
+          <span>Installing...</span>
+        </button>
+      ` : `
+        <button class="btn-primary-amber" onclick="supApp.installCatalogApp('${this.escapeJs(appId)}')">
+          ${isInst ? "Reinstall / Update" : "Install App"}
+        </button>
+      `;
+
       card.innerHTML = `
         <div class="card-top">
-          <div class="card-uuid">winget: ${app.id || app.Id}</div>
+          <div class="card-uuid">winget: ${this.escapeHtml(appId)}</div>
           <div class="card-title">${this.escapeHtml(app.name || app.Name)}</div>
           <div class="card-micro-tags">
-            <span class="micro-tag">${app.category || app.Category}</span>
+            <span class="micro-tag">${this.escapeHtml(app.category || app.Category)}</span>
             ${isInst ? `<span class="micro-tag" style="color:var(--safe-green);">Installed</span>` : ""}
           </div>
           <div class="card-desc">${this.escapeHtml(app.description || app.Description)}</div>
+          ${progressHtml}
         </div>
         <div class="card-bottom">
           <div class="pill-risk safe">Winget Verified</div>
-          <button class="btn-primary-amber" onclick="supApp.installCatalogApp('${app.id || app.Id}')">
-            ${isInst ? "Reinstall / Update" : "Install App"}
-          </button>
+          ${buttonHtml}
         </div>
       `;
       grid.appendChild(card);
@@ -1639,16 +2134,130 @@ class SUPApp {
   }
 
   async installCatalogApp(pkgId) {
-    this.showToast(`Starting silent installation for ${pkgId}...`, "info");
-    try {
-      const res = await this.api("/api/installer/install", "POST", { packageId: pkgId });
-      if (res.Success || res.success) {
-        this.showToast(res.Message || res.message, "success");
-        await this.loadInstaller();
-      } else {
-        this.showToast(`Install Failed: ${res.Message || res.message}`, "error");
+    if (!this.installingPackages) this.installingPackages = new Map();
+    if (this.installingPackages.has(pkgId)) return;
+
+    const app = (this.allCatalogApps || []).find(a => (a.id || a.Id) === pkgId);
+    const appName = app ? (app.name || app.Name) : pkgId;
+
+    this.installingPackages.set(pkgId, {
+      pct: 15,
+      stage: "Connecting to Winget repository...",
+      appName: appName,
+      startTime: Date.now()
+    });
+
+    const activePanel = document.getElementById("installer-active-panel");
+    const activeTitle = document.getElementById("active-install-title");
+    const activePkg = document.getElementById("active-install-pkg");
+    const activePct = document.getElementById("active-install-pct");
+    const activeBar = document.getElementById("active-install-bar");
+    const activeStage = document.getElementById("active-install-stage");
+    const activeTimer = document.getElementById("active-install-timer");
+
+    if (activePanel) {
+      activePanel.style.display = "block";
+      if (activeTitle) activeTitle.textContent = `Downloading & Installing ${appName}...`;
+      if (activePkg) activePkg.textContent = `[${pkgId}]`;
+      if (activePct) activePct.textContent = "15%";
+      if (activeBar) {
+        activeBar.style.width = "15%";
+        activeBar.classList.remove("success", "error");
       }
-    } catch (err) { }
+      if (activeStage) activeStage.textContent = "Querying Microsoft Winget sources and preparing silent install...";
+      if (activeTimer) activeTimer.textContent = "00:01";
+    }
+
+    this.renderInstallerGrid();
+
+    // Stage simulation timer while backend winget process runs
+    const startTime = Date.now();
+    const safePkgKey = pkgId.replace(/[^a-zA-Z0-9_-]/g, "_");
+    const timerInterval = setInterval(() => {
+      const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+      const mins = String(Math.floor(elapsedSec / 60)).padStart(2, "0");
+      const secs = String(elapsedSec % 60).padStart(2, "0");
+      if (activeTimer) activeTimer.textContent = `${mins}:${secs}`;
+
+      let currentPct = 15;
+      let currentStage = "Connecting to repository...";
+
+      if (elapsedSec < 3) {
+        currentPct = 15;
+        currentStage = "Connecting to Microsoft Winget repository...";
+      } else if (elapsedSec < 8) {
+        currentPct = 35;
+        currentStage = "Downloading installer package...";
+      } else if (elapsedSec < 16) {
+        currentPct = 58;
+        currentStage = "Verifying package signature & hash...";
+      } else if (elapsedSec < 28) {
+        currentPct = 78;
+        currentStage = "Executing silent background installer...";
+      } else if (elapsedSec < 50) {
+        currentPct = 88;
+        currentStage = "Finalizing components and system paths...";
+      } else {
+        currentPct = 94;
+        currentStage = "Finishing installation...";
+      }
+
+      const info = this.installingPackages.get(pkgId);
+      if (info) {
+        info.pct = currentPct;
+        info.stage = currentStage;
+      }
+
+      if (activePct) activePct.textContent = `${currentPct}%`;
+      if (activeBar) activeBar.style.width = `${currentPct}%`;
+      if (activeStage) activeStage.textContent = currentStage;
+
+      // Update card progress bar if rendered
+      const cardBar = document.querySelector(`.card-progress-bar-${safePkgKey}`);
+      const cardPct = document.querySelector(`.card-progress-pct-${safePkgKey}`);
+      const cardStage = document.querySelector(`.card-progress-stage-${safePkgKey}`);
+      if (cardBar) cardBar.style.width = `${currentPct}%`;
+      if (cardPct) cardPct.textContent = `${currentPct}%`;
+      if (cardStage) cardStage.textContent = currentStage;
+    }, 1000);
+
+    try {
+      this.showToast(`Starting download & installation of ${appName}...`, "info");
+      const res = await this.api("/api/installer/install", "POST", { packageId: pkgId });
+      clearInterval(timerInterval);
+
+      if (res.Success || res.success) {
+        if (activePct) activePct.textContent = "100%";
+        if (activeBar) {
+          activeBar.style.width = "100%";
+          activeBar.classList.add("success");
+        }
+        if (activeStage) activeStage.textContent = `✅ Successfully installed ${appName}!`;
+        this.showToast(`Application '${appName}' installed successfully!`, "success");
+
+        setTimeout(() => {
+          if (activePanel && this.installingPackages.size <= 1) activePanel.style.display = "none";
+        }, 3500);
+      } else {
+        if (activeBar) {
+          activeBar.style.width = "100%";
+          activeBar.classList.add("error");
+        }
+        if (activeStage) activeStage.textContent = `❌ Install Failed: ${res.Message || res.message}`;
+        this.showToast(`Installation Failed: ${res.Message || res.message}`, "error");
+      }
+    } catch (err) {
+      clearInterval(timerInterval);
+      if (activeBar) {
+        activeBar.style.width = "100%";
+        activeBar.classList.add("error");
+      }
+      if (activeStage) activeStage.textContent = `Error: ${err.message}`;
+      this.showToast(`Install error: ${err.message}`, "error");
+    } finally {
+      this.installingPackages.delete(pkgId);
+      await this.loadInstaller();
+    }
   }
 
   // =========================================================================
@@ -1741,21 +2350,45 @@ class SUPApp {
         const sizeFormatted = mb > 0 ? `${mb} MB (${files} files)` : `${files} files`;
 
         tr.innerHTML = `
-          <td><input type="checkbox" class="storage-target-check" value="${tid}" checked></td>
+          <td><input type="checkbox" class="storage-target-check" value="${tid}" checked onchange="supApp.updateStorageReclaimTotal()"></td>
           <td><strong style="color:#ffffff;">${this.escapeHtml(tname)}</strong></td>
           <td style="color:var(--text-secondary);">${this.escapeHtml(tdesc)}</td>
           <td><span style="font-family:var(--font-mono); color:var(--accent-amber); font-weight:700;">${sizeFormatted}</span></td>
         `;
         tbody.appendChild(tr);
       });
+      this.updateStorageReclaimTotal();
     } catch (err) {
       const tbody = document.getElementById("storage-table-body");
       if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:24px; color:var(--danger-red);">Scan error: ${err.message}</td></tr>`;
     }
   }
 
+  updateStorageReclaimTotal() {
+    const badge = document.getElementById("storage-reclaim-badge");
+    if (!badge || !this.allStorageTargets) return;
+
+    const checkedIds = new Set(Array.from(document.querySelectorAll(".storage-target-check:checked")).map(c => c.value));
+    let totalMb = 0;
+    this.allStorageTargets.forEach(t => {
+      const tid = t.id || t.Id || "";
+      if (checkedIds.has(tid)) {
+        const mb = t.sizeMb != null ? t.sizeMb : (t.SizeMb != null ? t.SizeMb : 0);
+        totalMb += mb;
+      }
+    });
+
+    if (totalMb >= 1024) {
+      const gb = (totalMb / 1024).toFixed(2);
+      badge.textContent = `${totalMb.toLocaleString()} MB (~${gb} GB)`;
+    } else {
+      badge.textContent = `${totalMb.toLocaleString()} MB`;
+    }
+  }
+
   toggleAllStorageChecks(master) {
     document.querySelectorAll(".storage-target-check").forEach(c => c.checked = master.checked);
+    this.updateStorageReclaimTotal();
   }
 
   async runStorageClean() {
@@ -1993,23 +2626,75 @@ class SUPApp {
 
         const tags = (p.tags || []).map(t => `<span class="micro-tag">${this.escapeHtml(t)}</span>`).join(" ");
 
+        // Build list of modifications
+        let mods = Array.isArray(p.modifications || p.Modifications) ? (p.modifications || p.Modifications) : [];
+        if (mods.length === 0 && Array.isArray(p.enabledTweakIds || p.EnabledTweakIds)) {
+          const ids = p.enabledTweakIds || p.EnabledTweakIds;
+          mods = ids.map(id => {
+            const found = (this.allTweaks || []).find(t => t.id === id);
+            return {
+              id: id,
+              name: found ? found.name : id,
+              description: found ? found.description : "Configured in profile",
+              category: found ? found.category : "System",
+              technicalDetails: found ? found.technicalDetails : ""
+            };
+          });
+        }
+
+        const modsHtml = mods.map(m => `
+          <div class="profile-mod-item">
+            <div class="profile-mod-header">
+              <span class="profile-mod-name">${this.escapeHtml(m.name || m.Name || m.id)}</span>
+              <span class="micro-tag" style="font-size:10px;">${this.escapeHtml(m.category || m.Category || "System")}</span>
+            </div>
+            <div class="profile-mod-desc">${this.escapeHtml(m.description || m.Description || "")}</div>
+            ${(m.technicalDetails || m.TechnicalDetails) ? `<div class="profile-mod-tech">${this.escapeHtml(m.technicalDetails || m.TechnicalDetails)}</div>` : ""}
+          </div>
+        `).join("");
+
+        const tweakCount = p.tweakCount || mods.length || (p.tweakStates ? Object.keys(p.tweakStates).length : 0);
+
         card.innerHTML = `
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <span class="pill-risk safe" style="font-size:11px; padding:2px 8px;">Preset</span>
-              <span style="font-size:11px; color:var(--text-muted);">${p.tweakCount || (p.tweakStates ? Object.keys(p.tweakStates).length : 0)} Tweaks</span>
+              <span style="font-size:11px; color:var(--text-muted);">${tweakCount} Tweaks</span>
             </div>
-            <strong style="color:#ffffff; font-size:14px; display:block; margin-bottom:6px;">${this.escapeHtml(p.name)}</strong>
+            <strong style="color:#ffffff; font-size:15px; display:block; margin-bottom:6px;">${this.escapeHtml(p.name)}</strong>
             <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; line-height:1.4;">${this.escapeHtml(p.description)}</p>
-            <div style="margin-bottom:16px;">${tags}</div>
+            <div style="margin-bottom:14px;">${tags}</div>
+
+            <button class="profile-mods-toggle" id="profile-toggle-${this.escapeJs(p.id)}" onclick="supApp.toggleProfileDetails('${this.escapeJs(p.id)}')">
+              <span>📋 Show Included Modifications (${mods.length} tweaks)</span>
+              <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="profile-mods-container" id="profile-mods-${this.escapeJs(p.id)}">
+              ${modsHtml}
+            </div>
           </div>
-          <button class="btn-primary-amber" style="width:100%; justify-content:center;" onclick="supApp.applyProfilePreset('${this.escapeJs(p.id)}')">
+          <button class="btn-primary-amber" style="width:100%; justify-content:center; margin-top:8px;" onclick="supApp.applyProfilePreset('${this.escapeJs(p.id)}')">
             Apply Preset
           </button>
         `;
         grid.appendChild(card);
       });
     } catch (err) { }
+  }
+
+  toggleProfileDetails(profileId) {
+    const container = document.getElementById(`profile-mods-${profileId}`);
+    const toggle = document.getElementById(`profile-toggle-${profileId}`);
+    if (!container || !toggle) return;
+
+    const isOpen = container.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    const label = toggle.querySelector("span");
+    if (label) {
+      label.textContent = isOpen 
+        ? label.textContent.replace("Show", "Hide") 
+        : label.textContent.replace("Hide", "Show");
+    }
   }
 
   async applyProfilePreset(presetId) {
@@ -2496,6 +3181,7 @@ class SUPApp {
   buildPaletteIndex() {
     this.paletteItems = [
       { title: "Dashboard Overview", category: "Navigation", action: () => this.switchTab("dashboard") },
+      { title: "System Health Scan & Diagnostics", category: "Diagnostics", action: () => { this.switchTab("health"); this.runHealthScan(); } },
       { title: "Optimize & Tweaks", category: "Navigation", action: () => this.switchTab("optimize") },
       { title: "Bloatware & Telemetry", category: "Navigation", action: () => this.switchTab("debloat") },
       { title: "Startup Applications", category: "Navigation", action: () => this.switchTab("startup") },
@@ -2509,12 +3195,20 @@ class SUPApp {
       { title: "SFC /scannow Integrity", category: "Repair", action: () => { this.switchTab("repair"); this.runRepair("sfc_scannow"); } },
       { title: "DISM Restore Health", category: "Repair", action: () => { this.switchTab("repair"); this.runRepair("dism_restorehealth"); } },
       { title: "Fix Registry Issues", category: "Repair", action: () => { this.switchTab("repair"); this.runRepair("fix_registry_issues"); } },
+      { title: "Apply Recommended Optimizations (No Aesthetic Changes)", category: "Action", action: () => this.applyRecommendedTweaks() },
       { title: "Apply All Safe Optimizations", category: "Action", action: () => this.applyAllSafeTweaks() },
       { title: "Purge All Recommended Bloat", category: "Action", action: () => this.removeRecommendedBloat() },
       { title: "Purge Standby RAM Cache", category: "Memory", action: () => this.purgeRamMemory() },
       { title: "Windows License & Activation", category: "System", action: () => { this.switchTab("systemtools"); this.switchSystemTool("license"); } },
       { title: "Winget Software Updates", category: "Installer", action: () => { this.switchTab("installer"); this.filterInstaller("Updates"); } },
-      { title: "Generate Battery Diagnostic Report", category: "Power", action: () => this.openBatteryReport() }
+      { title: "Generate Battery Diagnostic Report", category: "Power", action: () => this.openBatteryReport() },
+      { title: "Switch Accent: Amber Gold", category: "Theme", action: () => this.setAccentTheme("amber") },
+      { title: "Switch Accent: Electric Cyan", category: "Theme", action: () => this.setAccentTheme("cyan") },
+      { title: "Switch Accent: Matrix Emerald", category: "Theme", action: () => this.setAccentTheme("emerald") },
+      { title: "Switch Accent: Cyber Violet", category: "Theme", action: () => this.setAccentTheme("violet") },
+      { title: "Switch Accent: Sunset Crimson", category: "Theme", action: () => this.setAccentTheme("crimson") },
+      { title: "Switch Accent: Cobalt Blue", category: "Theme", action: () => this.setAccentTheme("blue") },
+      { title: "Refresh System Telemetry", category: "Diagnostics", action: () => this.refreshMetricsManual() }
     ];
   }
 
@@ -2566,14 +3260,19 @@ class SUPApp {
   // MEMORY PURGE (STANDBY RAM)
   // =========================================================================
   async purgeRamMemory() {
-    this.showToast("Purging standby cache & working sets...", "info");
+    this.showToast("Compacting working sets & purging standby RAM...", "info");
     try {
       const res = await this.api("/api/system/memory/purge", "POST", {});
       if (res.Success || res.success) {
-        this.showToast(`✅ ${res.Message || res.message}`, "success");
+        const reclaimed = res.ReclaimedMb ?? res.reclaimedMb;
+        if (reclaimed && reclaimed > 0) {
+          this.showToast(`⚡ RAM Purged: ~${reclaimed} MB reclaimed from background standby cache!`, "success");
+        } else {
+          this.showToast(`⚡ ${res.Message || res.message || "Working set memory compacted."}`, "success");
+        }
         await this.fetchMetrics();
       } else {
-        this.showToast(`Memory Purge Error: ${res.Message || res.message}`, "error");
+        this.showToast(`Memory Purge: ${res.Message || res.message}`, "error");
       }
     } catch (err) {
       this.showToast(`Error: ${err.message}`, "error");

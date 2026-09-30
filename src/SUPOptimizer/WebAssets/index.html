@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SUPOptimizer v1.0.1 - Native Windows System Engineering Platform</title>
+  <title>SUPOptimizer v1.0.2 - Native Windows System Engineering Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <script>
     window.SUP_TOKEN = "{{SUP_TOKEN}}";
@@ -26,16 +29,24 @@
         </div>
         <div class="brand-titles">
           <span class="brand-title">SUPOptimizer</span>
-          <span class="brand-badge">v1.0.1</span>
+          <span class="brand-badge">v1.0.2</span>
         </div>
       </div>
 
       <nav class="sidebar-nav">
+        <div class="nav-section-title">Overview</div>
         <button class="nav-item active" data-tab="dashboard" onclick="supApp.switchTab('dashboard')">
           <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"></rect><rect x="14" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="12" width="7" height="9" rx="1"></rect><rect x="3" y="16" width="7" height="5" rx="1"></rect></svg>
           <span>Dashboard</span>
         </button>
 
+        <button class="nav-item" data-tab="health" onclick="supApp.switchTab('health')">
+          <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
+          <span>Health Scan</span>
+          <span class="nav-badge-pill" id="badge-health-score" style="color:var(--safe-green);">100%</span>
+        </button>
+
+        <div class="nav-section-title">Optimization</div>
         <button class="nav-item" data-tab="optimize" onclick="supApp.switchTab('optimize')">
           <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
           <span>Optimize</span>
@@ -58,6 +69,7 @@
           <span>Disk Cleanup</span>
         </button>
 
+        <div class="nav-section-title">Toolbox</div>
         <button class="nav-item" data-tab="installer" onclick="supApp.switchTab('installer')">
           <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span>App Store</span>
@@ -83,6 +95,7 @@
           <span>Hardware Specs</span>
         </button>
 
+        <div class="nav-section-title">Advanced</div>
         <button class="nav-item" data-tab="features" onclick="supApp.switchTab('features')">
           <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
           <span>Windows Features</span>
@@ -144,6 +157,11 @@
         </div>
 
         <div class="header-right">
+          <button class="header-btn" onclick="supApp.refreshMetricsManual()" title="Refresh Telemetry & System Diagnostics (Ctrl+R / F5)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"></path></svg>
+            <span>Refresh</span>
+          </button>
+
           <button class="header-btn" onclick="supApp.openExternalBrowser()" title="Open SUPOptimizer in your default web browser (Chrome, Edge, Brave)">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
             <span>Web View</span>
@@ -171,54 +189,125 @@
              ============================================================== -->
         <div class="tab-pane active" id="tab-dashboard">
           <div class="hero-boost-banner">
-            <div class="hero-boost-text">
+            <div class="hero-boost-glow"></div>
+            <div class="hero-boost-content">
+              <div class="hero-badge-tag">
+                <span class="hero-badge-dot"></span>
+                <span>NATIVE SYSTEM ENGINEERING ENGINE</span>
+                <span class="hero-badge-ver">v1.0.2</span>
+              </div>
               <h2>Windows System Performance Center</h2>
-              <p>One-click system optimization: reduce background latency, disable telemetry trackers, reclaim disk capacity, and configure native low-overhead scheduling.</p>
+              <p>Intelligent low-latency tuning: reduce background kernel latency, disable telemetry trackers, reclaim disk capacity, and configure native low-overhead scheduling.</p>
+              
+              <div class="hero-actions-row">
+                <button class="btn-primary-amber" onclick="supApp.openSafeBoostModal()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  <span>1-Click Safe Boost</span>
+                </button>
+                <button class="btn-hero-action" onclick="supApp.purgeRamMemory()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                  <span>Purge Standby RAM</span>
+                </button>
+                <button class="btn-hero-action" onclick="supApp.switchTab('health')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  <span>Full Health Scan</span>
+                </button>
+                <button class="btn-hero-action" onclick="supApp.switchTab('storage')">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path></svg>
+                  <span>Clean Disk</span>
+                </button>
+              </div>
             </div>
-            <button class="btn-primary-amber" onclick="supApp.openSafeBoostModal()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
-              <span>1-Click Safe Boost</span>
-            </button>
           </div>
 
+          <!-- 4 Modern Circular Radial Gauges Grid -->
           <div class="stats-grid-4">
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">CPU Utilization</span>
-                <span class="pill-risk safe" id="dash-cpu-val">0%</span>
-              </div>
-              <div class="stat-gauge-track"><div class="stat-gauge-bar green" id="dash-cpu-bar" style="width:0%;"></div></div>
-              <div class="stat-subtext" id="dash-cpu-model">Loading CPU specifications...</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Memory Working Set</span>
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <button class="btn-sm-action" onclick="supApp.purgeRamMemory()" title="Purge standby cache & working sets to free RAM" style="background:rgba(0,242,254,0.15); border:1px solid rgba(0,242,254,0.3); color:#00f2fe; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">⚡ Purge RAM</button>
-                  <span class="pill-risk caution" id="dash-ram-val">0%</span>
+            <!-- CPU Gauge Card -->
+            <div class="modern-gauge-card">
+              <div class="gauge-ring-wrap">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                  <circle class="gauge-fill" id="dash-cpu-circle" cx="50" cy="50" r="42"></circle>
+                </svg>
+                <div class="gauge-inner-val">
+                  <span class="gauge-number" id="dash-cpu-val">0.0%</span>
+                  <span class="gauge-mini-lbl">CPU</span>
                 </div>
               </div>
-              <div class="stat-gauge-track"><div class="stat-gauge-bar" id="dash-ram-bar" style="width:0%;"></div></div>
-              <div class="stat-subtext" id="dash-ram-detail">Initializing RAM memory...</div>
+              <div class="gauge-info">
+                <div class="gauge-title-row">
+                  <span class="gauge-title">Processor Load</span>
+                  <span class="pill-risk safe" id="dash-cpu-pill">Normal</span>
+                </div>
+                <div class="gauge-subtext" id="dash-cpu-model">Detecting CPU specs...</div>
+                <div class="gauge-track-mini"><div class="gauge-bar-mini green" id="dash-cpu-bar" style="width:0%;"></div></div>
+              </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title" id="dash-disk-title">System Drive (C:)</span>
-                <span class="pill-risk safe" id="dash-disk-val">0%</span>
+            <!-- Memory Working Set Gauge Card -->
+            <div class="modern-gauge-card">
+              <div class="gauge-ring-wrap">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                  <circle class="gauge-fill" id="dash-ram-circle" cx="50" cy="50" r="42"></circle>
+                </svg>
+                <div class="gauge-inner-val">
+                  <span class="gauge-number" id="dash-ram-val">0.0%</span>
+                  <span class="gauge-mini-lbl">RAM</span>
+                </div>
               </div>
-              <div class="stat-gauge-track"><div class="stat-gauge-bar green" id="dash-disk-bar" style="width:0%;"></div></div>
-              <div class="stat-subtext" id="dash-disk-detail">Scanning drive capacity...</div>
+              <div class="gauge-info">
+                <div class="gauge-title-row">
+                  <span class="gauge-title">Memory Allocation</span>
+                  <button class="btn-sm-action" onclick="supApp.purgeRamMemory()" title="Purge standby memory cache" style="background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.15); border:1px solid rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.35); color:var(--accent-amber); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; cursor:pointer;">⚡ Purge</button>
+                </div>
+                <div class="gauge-subtext" id="dash-ram-detail">Initializing memory...</div>
+                <div class="gauge-track-mini"><div class="gauge-bar-mini" id="dash-ram-bar" style="width:0%;"></div></div>
+              </div>
             </div>
 
-            <div class="stat-card">
-              <div class="stat-header">
-                <span class="stat-title">Active Security State</span>
-                <span class="pill-risk safe" id="dash-health-badge">Healthy</span>
+            <!-- System Storage (C:) Gauge Card -->
+            <div class="modern-gauge-card">
+              <div class="gauge-ring-wrap">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                  <circle class="gauge-fill green" id="dash-disk-circle" cx="50" cy="50" r="42"></circle>
+                </svg>
+                <div class="gauge-inner-val">
+                  <span class="gauge-number" id="dash-disk-val">0%</span>
+                  <span class="gauge-mini-lbl">DISK</span>
+                </div>
               </div>
-              <div class="stat-gauge-track"><div class="stat-gauge-bar green" style="width:100%;"></div></div>
-              <div class="stat-subtext" id="dash-uptime">Uptime: Calculating...</div>
+              <div class="gauge-info">
+                <div class="gauge-title-row">
+                  <span class="gauge-title" id="dash-disk-title">System Drive (C:)</span>
+                  <span class="pill-risk safe" id="dash-disk-pill">Healthy</span>
+                </div>
+                <div class="gauge-subtext" id="dash-disk-detail">Scanning drive capacity...</div>
+                <div class="gauge-track-mini"><div class="gauge-bar-mini green" id="dash-disk-bar" style="width:0%;"></div></div>
+              </div>
+            </div>
+
+            <!-- System Health Score Gauge Card -->
+            <div class="modern-gauge-card" style="cursor:pointer;" onclick="supApp.switchTab('health')" title="Click to view full System Health diagnostics">
+              <div class="gauge-ring-wrap">
+                <svg class="gauge-svg" viewBox="0 0 100 100">
+                  <circle class="gauge-bg" cx="50" cy="50" r="42"></circle>
+                  <circle class="gauge-fill green" id="dash-health-circle" cx="50" cy="50" r="42" style="stroke-dashoffset: 0;"></circle>
+                </svg>
+                <div class="gauge-inner-val">
+                  <span class="gauge-number" id="dash-health-score-val">100</span>
+                  <span class="gauge-mini-lbl">SCORE</span>
+                </div>
+              </div>
+              <div class="gauge-info">
+                <div class="gauge-title-row">
+                  <span class="gauge-title">Health State</span>
+                  <span class="pill-risk safe" id="dash-health-badge">Optimal</span>
+                </div>
+                <div class="gauge-subtext" id="dash-uptime">Uptime: Online</div>
+                <div class="gauge-track-mini"><div class="gauge-bar-mini green" id="dash-health-bar" style="width:100%;"></div></div>
+              </div>
             </div>
           </div>
 
@@ -253,6 +342,106 @@
                 <tr><td>Motherboard & BIOS</td><td id="dash-spec-mb">Detecting Motherboard...</td><td><span class="pill-risk safe">UEFI Secure</span></td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- ==============================================================
+             HEALTH SCAN & SYSTEM DIAGNOSTIC CENTER
+             ============================================================== -->
+        <div class="tab-pane" id="tab-health">
+          <div class="hero-boost-banner" style="margin-bottom:20px;">
+            <div class="hero-boost-glow"></div>
+            <div class="hero-boost-content">
+              <div class="hero-badge-tag">
+                <span class="hero-badge-dot"></span>
+                <span>SYSTEM INTEGRITY & HARDENING AUDIT</span>
+              </div>
+              <h2>Windows System Health & Integrity Center</h2>
+              <p>Continuous automated audit across 7 critical system checkpoints: privacy trackers, UAC administration, storage capacity, memory pressure, restore point readiness, and real-time defense.</p>
+              <div class="hero-actions-row">
+                <button class="btn-primary-amber" id="btn-run-health-scan" onclick="supApp.runHealthScan()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                  <span>Run Full Health Scan</span>
+                </button>
+                <button class="btn-hero-action" onclick="supApp.applyAllHealthFixes()">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                  <span>Optimize All Recommended</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overall Health Score Card -->
+          <div class="health-overview-card">
+            <div class="health-gauge-big">
+              <svg class="health-gauge-svg" viewBox="0 0 100 100">
+                <circle class="health-gauge-bg" cx="50" cy="50" r="42"></circle>
+                <circle class="health-gauge-fill" id="health-score-circle" cx="50" cy="50" r="42"></circle>
+              </svg>
+              <div class="health-gauge-center">
+                <span class="health-score-number" id="health-score-val">100</span>
+                <span class="health-score-max">/ 100</span>
+              </div>
+            </div>
+
+            <div class="health-summary-content">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <h3 style="font-size:16px; font-weight:700; color:#ffffff; margin-bottom:4px;">Diagnostic Assessment</h3>
+                  <div class="health-status-badge optimized" id="health-status-badge">System Fully Optimized</div>
+                </div>
+                <div style="font-size:11px; color:var(--text-muted); font-family:var(--font-mono);" id="health-last-scanned">Audit status: Ready</div>
+              </div>
+
+              <div class="health-kpi-row">
+                <div class="health-kpi-chip">
+                  <span style="color:var(--danger-red); font-size:14px;">⛔</span>
+                  <div>
+                    <div class="health-kpi-val" id="health-crit-count" style="color:var(--danger-red);">0</div>
+                    <div class="health-kpi-lbl">Critical</div>
+                  </div>
+                </div>
+                <div class="health-kpi-chip">
+                  <span style="color:var(--caution-amber); font-size:14px;">⚠️</span>
+                  <div>
+                    <div class="health-kpi-val" id="health-warn-count" style="color:var(--caution-amber);">0</div>
+                    <div class="health-kpi-lbl">Warnings</div>
+                  </div>
+                </div>
+                <div class="health-kpi-chip">
+                  <span style="color:var(--azure-blue); font-size:14px;">ℹ️</span>
+                  <div>
+                    <div class="health-kpi-val" id="health-att-count" style="color:var(--azure-blue);">0</div>
+                    <div class="health-kpi-lbl">Attention</div>
+                  </div>
+                </div>
+                <div class="health-kpi-chip">
+                  <span style="color:var(--safe-green); font-size:14px;">✅</span>
+                  <div>
+                    <div class="health-kpi-val" id="health-ok-count" style="color:var(--safe-green);">0</div>
+                    <div class="health-kpi-lbl">Passed</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Findings List -->
+          <div style="margin-top:20px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h3 style="font-size:15px; font-weight:700; color:#ffffff; display:flex; align-items:center; gap:8px;">
+                <span>📋</span> <span>Diagnostic Findings & Action Items</span>
+              </h3>
+              <div style="display:flex; gap:6px;">
+                <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.filterHealthFindings('All', this)">All</button>
+                <button class="btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="supApp.filterHealthFindings('Issues', this)">Issues Only</button>
+              </div>
+            </div>
+            <div class="health-findings-grid" id="health-findings-container">
+              <div style="color:var(--text-muted); padding:24px; text-align:center; background:var(--bg-card); border-radius:var(--radius-md); border:1px solid var(--border-card);">
+                Click "Run Full Health Scan" to audit system integrity across 7 key checkpoints.
+              </div>
+            </div>
           </div>
         </div>
 
@@ -294,8 +483,12 @@
               </select>
             </div>
 
-            <div class="toolbar-right">
-              <button class="btn-primary-amber" onclick="supApp.applyAllSafeTweaks()">
+            <div class="toolbar-right" style="gap:8px; display:flex; align-items:center;">
+              <button class="btn-primary-amber" onclick="supApp.applyRecommendedTweaks()" title="Applies top performance, responsiveness, and privacy tweaks without altering Windows aesthetic appearance (keeps standard taskbar, context menus, and Explorer style)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span>Recommended Optimizations</span>
+              </button>
+              <button class="btn-secondary" onclick="supApp.applyAllSafeTweaks()" title="Applies all safe tweaks including shell aesthetics">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
                 <span>Apply Safe Tweaks</span>
               </button>
@@ -412,10 +605,16 @@
               <h2>Disk Cleaner & Junk File Removal</h2>
               <p>Scan and eliminate gigabytes of obsolete temporary files, system crash logs, GPU shader caches, Windows Update residue, and recycle bins across all drives.</p>
             </div>
-            <button class="btn-primary-amber" onclick="supApp.runStorageClean()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              <span>Clean Selected Targets</span>
-            </button>
+            <div style="display:flex; align-items:center; gap:14px; flex-shrink:0;">
+              <div class="storage-reclaim-box" style="text-align:right;">
+                <span style="font-size:11px; color:var(--text-secondary); display:block; text-transform:uppercase; letter-spacing:0.5px;">Reclaimable Space</span>
+                <span id="storage-reclaim-badge" style="font-size:17px; font-weight:800; color:var(--accent-amber); font-family:var(--font-mono);">0 MB</span>
+              </div>
+              <button class="btn-primary-amber" id="btn-storage-clean" onclick="supApp.runStorageClean()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <span>Clean Selected Targets</span>
+              </button>
+            </div>
           </div>
 
           <div class="table-panel">
@@ -481,6 +680,29 @@
             </div>
           </div>
 
+          <!-- Live Active Installation Banner / Progress Bar -->
+          <div id="installer-active-panel" class="installer-active-banner" style="display:none; margin-bottom:18px;">
+            <div class="active-install-content">
+              <div class="active-install-header">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="spinner-amber"></div>
+                  <div>
+                    <strong id="active-install-title" style="color:#ffffff; font-size:14px;">Installing Application...</strong>
+                    <span id="active-install-pkg" style="font-size:11px; color:var(--text-muted); margin-left:6px; font-family:var(--font-mono);"></span>
+                  </div>
+                </div>
+                <span id="active-install-pct" style="font-family:var(--font-mono); font-weight:700; color:var(--accent-amber); font-size:13px;">0%</span>
+              </div>
+              <div class="install-progress-track">
+                <div id="active-install-bar" class="install-progress-fill" style="width:0%;"></div>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                <span id="active-install-stage" style="font-size:12px; color:var(--text-secondary);">Initializing silent background installer...</span>
+                <span id="active-install-timer" style="font-size:11px; color:var(--text-muted); font-family:var(--font-mono);">00:00</span>
+              </div>
+            </div>
+          </div>
+
           <div class="tweak-grid-2col" id="installer-grid">
             <!-- Dynamically populated -->
           </div>
@@ -523,15 +745,47 @@
 
           <!-- Active Network Connections Monitor (NetLimiter-Style Inspector) -->
           <div style="margin-top:28px;">
-            <div class="toolbar-row" style="margin-bottom:12px;">
+            <!-- Network Statistics Metric Bar -->
+            <div class="net-metrics-grid">
+              <div class="net-metric-card">
+                <span class="net-metric-label">Total Sockets</span>
+                <span class="net-metric-value" id="net-stat-total">0</span>
+              </div>
+              <div class="net-metric-card">
+                <span class="net-metric-label">Established (Active)</span>
+                <span class="net-metric-value" id="net-stat-established" style="color:var(--safe-green);">0</span>
+              </div>
+              <div class="net-metric-card">
+                <span class="net-metric-label">Listening Ports</span>
+                <span class="net-metric-value" id="net-stat-listening" style="color:#00f2fe;">0</span>
+              </div>
+              <div class="net-metric-card">
+                <span class="net-metric-label">Active Processes</span>
+                <span class="net-metric-value" id="net-stat-apps" style="color:var(--accent-amber);">0</span>
+              </div>
+            </div>
+
+            <div class="toolbar-row" style="margin-bottom:12px; flex-wrap:wrap; gap:10px;">
               <div>
                 <h3 style="font-size:15px; font-weight:700; color:#ffffff; display:flex; align-items:center; gap:8px;">
                   <span>🌐</span> <span>Active Network Connections Monitor (Inbound / Outbound)</span>
                 </h3>
-                <span style="font-size:12px; color:var(--text-secondary);">Real-time read-only inspection of active TCP/UDP sockets with owner process (PID), remote IP endpoints, and socket states.</span>
+                <span style="font-size:12px; color:var(--text-secondary);">Real-time inspection of active TCP/UDP sockets with owner process, remote endpoints, and recognized services.</span>
               </div>
-              <div style="display:flex; align-items:center; gap:10px;">
-                <input type="text" id="net-conn-search" class="search-input-field" placeholder="Filter process, IP or port..." oninput="supApp.filterNetworkConnections()" style="max-width:220px;">
+              <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <input type="text" id="net-conn-search" class="search-input-field" placeholder="Filter process, IP, port, service..." oninput="supApp.filterNetworkConnections()" style="max-width:200px;">
+                <select id="net-conn-state-filter" class="select-filter" onchange="supApp.filterNetworkConnections()">
+                  <option value="All">State: All</option>
+                  <option value="ESTABLISHED">Established (Active)</option>
+                  <option value="LISTEN">Listening Ports</option>
+                  <option value="TIME_WAIT">Time / Close Wait</option>
+                </select>
+                <select id="net-conn-dir-filter" class="select-filter" onchange="supApp.filterNetworkConnections()">
+                  <option value="All">Direction: All</option>
+                  <option value="Outbound">Outbound (Internet)</option>
+                  <option value="Inbound">Inbound (Server)</option>
+                  <option value="Local">Local Loopback</option>
+                </select>
                 <label style="display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--text-secondary); cursor:pointer;">
                   <input type="checkbox" id="net-conn-autorefresh" onchange="supApp.toggleNetConnAutoRefresh(this)">
                   <span>Auto (3s)</span>
@@ -547,11 +801,11 @@
                     <tr>
                       <th style="width:70px;">PID</th>
                       <th>Application Process</th>
-                      <th style="width:70px;">Proto</th>
+                      <th style="width:65px;">Proto</th>
                       <th>Local Endpoint</th>
-                      <th>Remote Endpoint</th>
-                      <th>State</th>
-                      <th>Direction</th>
+                      <th>Remote Endpoint & Service</th>
+                      <th style="width:130px;">State</th>
+                      <th style="width:140px;">Direction</th>
                     </tr>
                   </thead>
                   <tbody id="net-connections-tbody">
@@ -1196,23 +1450,62 @@
              15. SETTINGS PANE
              ============================================================== -->
         <div class="tab-pane" id="tab-settings">
-          <div class="stat-card" style="max-width:700px; margin-bottom:20px;">
-            <h3 style="font-size:15px; font-weight:700; margin-bottom:14px;">Platform Preferences</h3>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border-subtle);">
+          <div class="stat-card" style="max-width:740px; margin-bottom:20px;">
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:#ffffff; display:flex; align-items:center; gap:8px;">
+              <span>⚙️</span> <span>Platform Preferences & Personalization</span>
+            </h3>
+
+            <!-- Theme Accent Palette Picker -->
+            <div style="padding:14px 0; border-bottom:1px solid var(--border-subtle);">
+              <div style="margin-bottom:10px;">
+                <strong style="color:#ffffff; font-size:13px;">Interface Accent Theme</strong>
+                <p style="font-size:12px; color:var(--text-muted);">Choose a signature neon/pastel accent color tailored for high-contrast dark environments.</p>
+              </div>
+              <div class="theme-picker-grid">
+                <button class="theme-swatch active" data-theme="amber" onclick="supApp.setAccentTheme('amber', this)">
+                  <span class="swatch-circle" style="background:#f59e0b; color:#f59e0b;"></span>
+                  <span>Amber Gold</span>
+                </button>
+                <button class="theme-swatch" data-theme="cyan" onclick="supApp.setAccentTheme('cyan', this)">
+                  <span class="swatch-circle" style="background:#06b6d4; color:#06b6d4;"></span>
+                  <span>Electric Cyan</span>
+                </button>
+                <button class="theme-swatch" data-theme="emerald" onclick="supApp.setAccentTheme('emerald', this)">
+                  <span class="swatch-circle" style="background:#10b981; color:#10b981;"></span>
+                  <span>Matrix Emerald</span>
+                </button>
+                <button class="theme-swatch" data-theme="violet" onclick="supApp.setAccentTheme('violet', this)">
+                  <span class="swatch-circle" style="background:#a855f7; color:#a855f7;"></span>
+                  <span>Cyber Violet</span>
+                </button>
+                <button class="theme-swatch" data-theme="crimson" onclick="supApp.setAccentTheme('crimson', this)">
+                  <span class="swatch-circle" style="background:#f43f5e; color:#f43f5e;"></span>
+                  <span>Sunset Crimson</span>
+                </button>
+                <button class="theme-swatch" data-theme="blue" onclick="supApp.setAccentTheme('blue', this)">
+                  <span class="swatch-circle" style="background:#3b82f6; color:#3b82f6;"></span>
+                  <span>Cobalt Blue</span>
+                </button>
+              </div>
+            </div>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-subtle);">
               <div>
                 <strong style="color:#ffffff;">Safe Test Mode (Dry-Run Preview)</strong>
-                <p style="font-size:12px; color:var(--text-muted);">Simulate all tweaks without applying changes to the Windows Registry.</p>
+                <p style="font-size:12px; color:var(--text-muted);">Simulate all tweaks without applying permanent changes to the Windows Registry.</p>
               </div>
               <input type="checkbox" id="cfg-safe-mode" onchange="supApp.toggleSafeTestMode(this.checked)" style="transform:scale(1.2);">
             </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border-subtle);">
+
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border-subtle);">
               <div>
                 <strong style="color:#ffffff;">Local API Server</strong>
                 <p style="font-size:12px; color:var(--text-muted);" id="cfg-server-url">http://127.0.0.1:5000/</p>
               </div>
-              <button class="btn-secondary" onclick="supApp.openExternalBrowser()">Open URL</button>
+              <button class="btn-secondary" onclick="supApp.openExternalBrowser()">Open in Browser</button>
             </div>
-            <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0;">
+
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0;">
               <div>
                 <strong style="color:#ffffff;">Audit & Operation Logs</strong>
                 <p style="font-size:12px; color:var(--text-muted);">Clear all persisted session logs and telemetry cache.</p>

@@ -30,11 +30,64 @@ namespace SUPOptimizer.Core.System
         }
         public List<string> Tags { get; set; } = new();
         public Dictionary<string, string> Metadata { get; set; } = new();
+        public List<ProfileTweakInfo> Modifications
+        {
+            get
+            {
+                var list = new List<ProfileTweakInfo>();
+                foreach (var id in EnabledTweakIds)
+                {
+                    var t = TweakRegistry.GetTweak(id);
+                    if (t != null)
+                    {
+                        list.Add(new ProfileTweakInfo
+                        {
+                            Id = t.Id,
+                            Name = t.Name,
+                            Description = t.Description,
+                            TechnicalDetails = t.TechnicalDetails,
+                            Category = t.Category.ToString(),
+                            Risk = t.Risk.ToString(),
+                            Enabled = true
+                        });
+                    }
+                }
+                foreach (var id in DisabledTweakIds)
+                {
+                    var t = TweakRegistry.GetTweak(id);
+                    if (t != null)
+                    {
+                        list.Add(new ProfileTweakInfo
+                        {
+                            Id = t.Id,
+                            Name = t.Name,
+                            Description = t.Description,
+                            TechnicalDetails = t.TechnicalDetails,
+                            Category = t.Category.ToString(),
+                            Risk = t.Risk.ToString(),
+                            Enabled = false
+                        });
+                    }
+                }
+                return list;
+            }
+        }
+    }
+
+    public class ProfileTweakInfo
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string TechnicalDetails { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Risk { get; set; } = "Safe";
+        public bool Enabled { get; set; } = true;
     }
 
     public static class ConfigProfileService
     {
-        public static ConfigProfile ExportCurrentConfiguration(string profileName = "My Windows Setup", string description = "Exported from SUPOptimizer v1.0.1")
+        public static ConfigProfile ExportCurrentConfiguration(string profileName = "My Windows Setup", string description = "Exported from SUPOptimizer v1.0.2")
         {
             var profile = new ConfigProfile
             {
@@ -71,31 +124,54 @@ namespace SUPOptimizer.Core.System
                 {
                     Id = "recommended",
                     Name = "Recommended Setup",
-                    Description = "The optimal balance of privacy, shell responsiveness, and background decluttering for everyday Windows 10 & 11 use.",
-                    Tags = new List<string> { "Recommended", "Safe", "Privacy" },
+                    Description = "The optimal balance of privacy, shell responsiveness, network uncapping, and background decluttering for everyday Windows 10 & 11 use.",
+                    Tags = new List<string> { "Recommended", "Safe", "Performance", "Privacy" },
                     EnabledTweakIds = new List<string>
                     {
                         "privacy_telemetry", "privacy_advertising_id", "privacy_activity_history",
                         "privacy_suggestions", "privacy_bing_search", "privacy_copilot",
+                        "privacy_feedback", "privacy_location", "privacy_windows_recall",
+                        "privacy_click_to_do", "privacy_edge_ads_recommendations", "privacy_consumer_features",
                         "opt_network_throttling", "opt_system_responsiveness", "opt_game_mode",
-                        "opt_long_paths", "opt_delivery_opt_p2p", "opt_menu_delay",
-                        "win_show_extensions", "win_show_hidden", "win_open_this_pc",
-                        "win_classic_context_menu", "win_error_reporting", "win_disable_widgets",
-                        "win_end_task_right_click", "win_dark_mode", "win_drive_letters_first"
+                        "opt_long_paths", "opt_delivery_opt_p2p", "opt_menu_delay", "opt_ntfs_last_access",
+                        "opt_background_apps", "win_show_extensions", "win_show_hidden",
+                        "win_error_reporting", "win_lock_screen_tips", "win_sticky_keys_shortcut",
+                        "win_prevent_update_reboot", "win_alt_tab_windows_only",
+                        "priv_disable_office_telemetry", "priv_disable_edge_copilot", "perf_disable_wsaifabric"
                     }
                 },
                 new ConfigProfile
                 {
                     Id = "gaming",
                     Name = "Competitive Gaming Mode",
-                    Description = "Ultra-low input latency, raw mouse tracking, no background recording, disabled MPO, and prioritized foreground CPU scheduling.",
-                    Tags = new List<string> { "Low Latency", "Gaming", "GPU" },
+                    Description = "Ultra-low input latency, raw mouse tracking, zero background recording, disabled MPO, unthrottled networking, and prioritized foreground CPU scheduling.",
+                    Tags = new List<string> { "Low Latency", "Gaming", "GPU", "High FPS" },
                     EnabledTweakIds = new List<string>
                     {
                         "opt_game_dvr", "opt_game_mode", "opt_mouse_accel", "perf_disable_hpet",
                         "perf_mpo_disable", "opt_network_throttling", "opt_system_responsiveness",
                         "opt_background_apps", "opt_visual_fx", "win_disable_visual_effects",
-                        "perf_prefer_ipv4", "perf_disable_teredo", "perf_disable_gamebar_popups"
+                        "perf_prefer_ipv4", "perf_disable_teredo", "perf_disable_gamebar_popups",
+                        "opt_ntfs_last_access", "opt_delivery_opt_p2p", "opt_menu_delay",
+                        "perf_disable_wsaifabric", "win_sticky_keys_shortcut", "win_prevent_update_reboot",
+                        "privacy_telemetry"
+                    }
+                },
+                new ConfigProfile
+                {
+                    Id = "ultra_performance",
+                    Name = "Ultra Low-Latency & Raw Performance",
+                    Description = "Engineered for maximum hardware throughput and zero jitter: foreground quantum CPU priority, network throttling bypass, disabled HPET, and suppressed background telemetry.",
+                    Tags = new List<string> { "Ultra Perf", "Zero Stutter", "Low Latency" },
+                    EnabledTweakIds = new List<string>
+                    {
+                        "opt_system_responsiveness", "opt_network_throttling", "perf_disable_hpet",
+                        "perf_mpo_disable", "opt_game_mode", "opt_game_dvr", "opt_mouse_accel",
+                        "opt_ntfs_last_access", "opt_menu_delay", "opt_delivery_opt_p2p",
+                        "opt_background_apps", "perf_prefer_ipv4", "perf_disable_teredo",
+                        "perf_disable_gamebar_popups", "perf_disable_wsaifabric", "win_prevent_update_reboot",
+                        "win_error_reporting", "privacy_telemetry", "privacy_feedback", "opt_long_paths",
+                        "win_sticky_keys_shortcut"
                     }
                 },
                 new ConfigProfile

@@ -31,7 +31,7 @@ namespace SUPOptimizer.Host
         {
             _server = server;
 
-            Text = "SUPOptimizer v1.0.1";
+            Text = "SUPOptimizer v1.0.2";
             Icon = NativeMethods.CreateSUPIcon();
             StartPosition = FormStartPosition.CenterScreen;
             Size = new Size(1300, 850);

@@ -6,7 +6,7 @@
   <p><em>Single portable executable (Zero-Install), embedded local web engine, ultra-modern UI, and native system tray host.</em></p>
 
   <p>
-    <img src="https://img.shields.io/badge/Version-1.0.1-brightgreen?style=flat-square" alt="Version 1.0.1">
+    <img src="https://img.shields.io/badge/Version-1.0.2-brightgreen?style=flat-square" alt="Version 1.0.2">
     <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011%20(x64)-0078d4?style=flat-square&logo=windows" alt="Platform">
     <img src="https://img.shields.io/badge/.NET-8.0-512bd4?style=flat-square&logo=dotnet" alt=".NET 8">
     <img src="https://img.shields.io/badge/Architecture-Single--File%20Portable-00c853?style=flat-square" alt="Portable">
@@ -316,10 +316,10 @@ Yes. The **Standalone** edition (`SUPOptimizer.exe`) bundles the complete runtim
 
 ## Version History and Changelog
 
-### Current Version: `1.0.1` (Official Release)
+### Current Version: `1.0.2` (Official Release)
 *Release date: September 2026*
 
-#### Release Notes & New Features (v1.0.1)
+#### Release Notes & New Features (v1.0.2)
 - **🪪 Official Windows License & Activation Center**:
   - Native WMI/CIM querying via the `SoftwareLicensingProduct` system class (no external scripts or security risks).
   - Real-time detection of genuine activation status (*Licensed / Permanent*, *Grace Period*, *Unlicensed*), distribution channel (*Retail*, *OEM:DM*, *Volume KMS/MAK*), partial product key (`PartialProductKey`), and Windows edition.
@@ -335,10 +335,10 @@ Yes. The **Standalone** edition (`SUPOptimizer.exe`) bundles the complete runtim
   - Automated generation and browser preview of the official Windows HTML battery report (`powercfg /batteryreport`).
 - **📚 Comprehensive User Guide & Documentation**:
   - Completely rewritten `README.md` with in-depth documentation for all 19 suite modules, step-by-step user guidance, automated compilation instructions, and security FAQs.
-  - Synchronized application title and version badges across the UI, WebView2 window, and system tray context menu (`SUPOptimizer v1.0.1`).
+  - Synchronized application title and version badges across the UI, WebView2 window, and system tray context menu (`SUPOptimizer v1.0.2`).
 
 ---
 
 <div align="center">
-  <sub>SUPOptimizer v1.0.1 — Built with dedication to Windows transparency, privacy, and performance.</sub>
+  <sub>SUPOptimizer v1.0.2 — Built with dedication to Windows transparency, privacy, and performance.</sub>
 </div>

@@ -47,6 +47,7 @@ namespace SUPOptimizer.Core.System
         public int RemotePort { get; set; }
         public string State { get; set; } = "ESTABLISHED";
         public string Direction { get; set; } = "Outbound";
+        public string ServiceName { get; set; } = string.Empty;
     }
 
     public static class NetworkService
@@ -206,12 +207,13 @@ namespace SUPOptimizer.Core.System
                                 ProcessId = pid,
                                 ProcessName = GetProcessName(pid, procCache),
                                 Protocol = "TCP",
-                                LocalAddress = $"{localIp}:{localPort}",
+                                LocalAddress = localIp,
                                 LocalPort = localPort,
-                                RemoteAddress = $"{remoteIp}:{remotePort}",
+                                RemoteAddress = remoteIp,
                                 RemotePort = remotePort,
                                 State = stateStr,
-                                Direction = direction
+                                Direction = direction,
+                                ServiceName = ResolveServiceName(remotePort > 0 ? remotePort : localPort)
                             });
 
                             rowPtr = IntPtr.Add(rowPtr, Marshal.SizeOf<MIB_TCPROW_OWNER_PID>());
@@ -233,17 +235,20 @@ namespace SUPOptimizer.Core.System
                     var props = IPGlobalProperties.GetIPGlobalProperties();
                     foreach (var conn in props.GetActiveTcpConnections())
                     {
+                        int rPort = conn.RemoteEndPoint.Port;
+                        int lPort = conn.LocalEndPoint.Port;
                         list.Add(new NetworkConnectionEntry
                         {
                             ProcessId = 0,
                             ProcessName = "System Network Stack",
                             Protocol = "TCP",
-                            LocalAddress = conn.LocalEndPoint.ToString(),
-                            LocalPort = conn.LocalEndPoint.Port,
-                            RemoteAddress = conn.RemoteEndPoint.ToString(),
-                            RemotePort = conn.RemoteEndPoint.Port,
+                            LocalAddress = conn.LocalEndPoint.Address.ToString(),
+                            LocalPort = lPort,
+                            RemoteAddress = conn.RemoteEndPoint.Address.ToString(),
+                            RemotePort = rPort,
                             State = conn.State.ToString().ToUpperInvariant(),
-                            Direction = conn.RemoteEndPoint.Address.ToString() == "127.0.0.1" ? "Local Loopback" : "Outbound"
+                            Direction = conn.RemoteEndPoint.Address.ToString() == "127.0.0.1" ? "Local Loopback" : "Outbound",
+                            ServiceName = ResolveServiceName(rPort > 0 ? rPort : lPort)
                         });
                     }
                 }
@@ -251,6 +256,42 @@ namespace SUPOptimizer.Core.System
             }
 
             return list;
+        }
+
+        public static string ResolveServiceName(int port)
+        {
+            return port switch
+            {
+                80 => "HTTP",
+                443 => "HTTPS (TLS)",
+                53 => "DNS",
+                22 => "SSH",
+                21 => "FTP",
+                25 => "SMTP",
+                587 => "SMTP (TLS)",
+                110 => "POP3",
+                995 => "POP3 (SSL)",
+                143 => "IMAP",
+                993 => "IMAP (SSL)",
+                123 => "NTP (Time)",
+                135 => "RPC Endpoint",
+                137 => "NetBIOS Name",
+                138 => "NetBIOS Datagram",
+                139 => "NetBIOS Session",
+                445 => "SMB (File Sharing)",
+                3389 => "RDP (Remote Desktop)",
+                5353 => "mDNS",
+                5894 => "SUPOptimizer API",
+                8080 => "HTTP (Alt Web)",
+                8443 => "HTTPS (Alt Web)",
+                5000 => "Dev Server (5000)",
+                5173 => "Vite Dev Server",
+                3000 => "Node/React App",
+                1900 => "SSDP (UPnP)",
+                27015 => "Steam Server",
+                7777 => "Game Server",
+                _ => string.Empty
+            };
         }
 
         private static string ResolveTcpState(uint state)
