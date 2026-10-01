@@ -76,26 +76,45 @@
 
 /* Theme Presets */
 body[data-theme="amber"] {
-  --accent-r: 245; --accent-g: 158; --accent-b: 11;
+  --accent-r: 245;
+  --accent-g: 158;
+  --accent-b: 11;
 }
+
 body[data-theme="cyan"] {
-  --accent-r: 6; --accent-g: 182; --accent-b: 212;
+  --accent-r: 6;
+  --accent-g: 182;
+  --accent-b: 212;
 }
+
 body[data-theme="emerald"] {
-  --accent-r: 16; --accent-g: 185; --accent-b: 129;
+  --accent-r: 16;
+  --accent-g: 185;
+  --accent-b: 129;
 }
+
 body[data-theme="violet"] {
-  --accent-r: 168; --accent-g: 85; --accent-b: 247;
+  --accent-r: 168;
+  --accent-g: 85;
+  --accent-b: 247;
 }
+
 body[data-theme="crimson"] {
-  --accent-r: 244; --accent-g: 63; --accent-b: 94;
+  --accent-r: 244;
+  --accent-g: 63;
+  --accent-b: 94;
 }
+
 body[data-theme="blue"] {
-  --accent-r: 59; --accent-g: 130; --accent-b: 246;
+  --accent-r: 59;
+  --accent-g: 130;
+  --accent-b: 246;
 }
 
 /* Base Reset */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -130,7 +149,8 @@ body[data-theme="blue"] {
   background: transparent;
 }
 
-html, body {
+html,
+body {
   height: 100vh;
   width: 100vw;
   margin: 0;
@@ -230,6 +250,7 @@ html, body {
 .sidebar-nav::-webkit-scrollbar {
   width: 4px;
 }
+
 .sidebar-nav::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
   border-radius: 4px;
@@ -410,8 +431,17 @@ html, body {
 }
 
 @keyframes pulse-dot-anim {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+  }
 }
 
 .pill-lbl {
@@ -430,6 +460,7 @@ html, body {
   cursor: pointer;
   transition: border-color 0.15s ease;
 }
+
 .pill-admin:hover {
   border-color: var(--accent-amber);
 }
@@ -538,14 +569,22 @@ html, body {
 .tab-pane {
   display: none;
 }
+
 .tab-pane.active {
   display: block;
   animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================================================
@@ -668,7 +707,8 @@ html, body {
   transition: all 0.15s ease;
 }
 
-.select-filter:focus, .select-filter:hover {
+.select-filter:focus,
+.select-filter:hover {
   border-color: var(--border-card-hover);
   color: var(--text-main);
 }
@@ -1659,8 +1699,15 @@ html, body {
 }
 
 @keyframes modalPop {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .modal-head {
@@ -1692,557 +1739,545 @@ html, body {
 }
 
 /* Toast Notifications */
-#toast-container,
-.toast-container {
+#toast-container {
   position: fixed;
   bottom: 24px;
   right: 24px;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  z-index: 9999;
-  pointer-events: none;
-}
 
-.toast {
-  background: rgba(22, 22, 28, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  padding: 12px 18px;
-  color: var(--text-main);
-  font-size: 13px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08);
-  pointer-events: auto;
-  animation: toastSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  position: relative;
-  overflow: hidden;
-  max-width: 440px;
-}
+  .toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none;
+  }
 
-.toast.toast-success {
-  border-color: rgba(16, 185, 129, 0.4);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(16, 185, 129, 0.2);
-}
+  .toast {
+    background: rgba(22, 22, 28, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.08);
+    pointer-events: auto;
+    animation: toastSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    position: relative;
+    overflow: hidden;
+    max-width: 440px;
+  }
 
-.toast.toast-error {
-  border-color: rgba(239, 68, 68, 0.4);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(239, 68, 68, 0.2);
-}
+  .toast.toast-success {
+    border-color: rgba(16, 185, 129, 0.4);
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(16, 185, 129, 0.2);
+  }
 
-.toast.toast-warning {
-  border-color: rgba(245, 158, 11, 0.4);
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(245, 158, 11, 0.2);
-}
+  .toast.toast-error {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(239, 68, 68, 0.2);
+  }
 
-@keyframes toastSlide {
-  from { opacity: 0; transform: translateY(12px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
+  .toast.toast-warning {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.7), 0 0 16px rgba(245, 158, 11, 0.2);
+  }
 
-/* ==========================================================================
+  @keyframes toastSlide {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  /* ==========================================================================
    RESPONSIVE TABLE WRAPPER & HORIZONTAL OVERFLOW
    ========================================================================== */
-.table-scroll-wrapper {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
+  .table-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 
-.table-scroll-wrapper::-webkit-scrollbar {
-  height: 6px;
-}
+  .table-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
 
-.table-scroll-wrapper .data-table {
-  min-width: 780px;
-}
+  .table-scroll-wrapper .data-table {
+    min-width: 780px;
+  }
 
-/* Startup Table Cell Styling */
-.startup-status-cell {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
+  /* Startup Table Cell Styling */
+  .startup-status-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-/* ==========================================================================
+  /* ==========================================================================
    MULTI-DISK CARDS GRID (DASHBOARD & STORAGE)
    ========================================================================== */
-.disks-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 14px;
-}
+  .disks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
 
-.disk-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  transition: all 0.2s ease;
-}
+  .disk-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
 
-.disk-card:hover {
-  border-color: var(--accent-amber);
-  background: var(--bg-card-hover);
-  transform: translateY(-2px);
-}
+  .disk-card:hover {
+    border-color: var(--accent-amber);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+  }
 
-.disk-card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  .disk-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-.disk-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+  .disk-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-.disk-format-badge {
-  font-size: 10px;
-  font-family: var(--font-mono);
-  color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
+  .disk-format-badge {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
 
-.disk-stats-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  color: var(--text-secondary);
-}
+  .disk-stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
 
-/* ==========================================================================
+  /* ==========================================================================
    ENVIRONMENT VARIABLE ROW EDITOR (WINDOWS EDITOR STYLE)
    ========================================================================== */
-.env-rows-container {
-  max-height: 280px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 4px;
-  background: #111114;
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-sm);
-}
+  .env-rows-container {
+    max-height: 280px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 4px;
+    background: #111114;
+    border: 1px solid var(--border-card);
+    border-radius: var(--radius-sm);
+  }
 
-.env-row-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #18181c;
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
-  padding: 6px 10px;
-  transition: border-color 0.15s ease;
-}
+  .env-row-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #18181c;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 6px 10px;
+    transition: border-color 0.15s ease;
+  }
 
-.env-row-item:focus-within {
-  border-color: var(--accent-amber);
-}
+  .env-row-item:focus-within {
+    border-color: var(--accent-amber);
+  }
 
-.env-row-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: var(--text-main);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  outline: none;
-}
+  .env-row-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    outline: none;
+  }
 
-.btn-row-action {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 3px 6px;
-  font-size: 12px;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-}
+  .btn-row-action {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 3px 6px;
+    font-size: 12px;
+    border-radius: 4px;
+    transition: all 0.15s ease;
+  }
 
-.btn-row-action:hover {
-  color: var(--text-main);
-  background: rgba(255, 255, 255, 0.08);
-}
+  .btn-row-action:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.08);
+  }
 
-/* Large Modal Dialog */
-.modal-dialog-large {
-  width: 90%;
-  max-width: 780px;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-}
+  /* Large Modal Dialog */
+  .modal-dialog-large {
+    width: 90%;
+    max-width: 780px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-/* ==========================================================================
+  /* ==========================================================================
    NETWORK CONNECTIONS MONITOR (NETLIMITER STYLE)
    ========================================================================== */
-.conn-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
+  .conn-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
 
-.conn-badge-outbound {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
-  border: 1px solid rgba(56, 189, 248, 0.3);
-}
+  .conn-badge-outbound {
+    background: rgba(56, 189, 248, 0.15);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
 
-.conn-badge-inbound {
-  background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
+  .conn-badge-inbound {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
 
-.conn-badge-listen {
-  background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
+  .conn-badge-listen {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
 
-.conn-badge-local {
-  background: rgba(161, 161, 170, 0.12);
-  color: #a1a1aa;
-  border: 1px solid rgba(161, 161, 170, 0.25);
-}
+  .conn-badge-local {
+    background: rgba(161, 161, 170, 0.12);
+    color: #a1a1aa;
+    border: 1px solid rgba(161, 161, 170, 0.25);
+  }
 
-/* ==========================================================================
+  /* ==========================================================================
    HARDWARE SPECS SECTION & TELEMETRY CARDS
    ========================================================================== */
-.hw-section-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 24px 0 12px 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+  .hw-section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 24px 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-.hw-dimm-badge {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent-amber);
-  background: rgba(245, 158, 11, 0.12);
-  padding: 3px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(245, 158, 11, 0.25);
-}
+  .hw-dimm-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-amber);
+    background: rgba(245, 158, 11, 0.12);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
 
-/* ==========================================================================
+  /* ==========================================================================
    ENHANCEMENT STYLES: PROFILES ACCORDION, INSTALLER PROGRESS, DISK CLEANUP & NETWORK
    ========================================================================== */
 
-/* 1. Profile Modifications Collapsible Accordion */
-.profile-mods-toggle {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  width: 100%;
-  margin-top: 10px;
-  margin-bottom: 12px;
+  /* 1. Profile Modifications Collapsible Accordion */
+  .profile-mods-toggle {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 12px;
+  }
+
+  .profile-mods-toggle:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    border-color: rgba(245, 158, 11, 0.35);
+  }
+
+  .profile-mods-toggle .toggle-icon {
+    transition: transform 0.25s ease;
+  }
+
+  .profile-mods-toggle.open .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .profile-mods-container {
+    display: none;
+    background: rgba(10, 10, 14, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 10px;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-bottom: 14px;
+  }
+
+  .profile-mods-container.open {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .profile-mod-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.15s ease;
+    border-radius: 4px;
+  }
+
+  .profile-mod-item:last-child {
+    border-bottom: none;
+  }
+
+  .profile-mod-item:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .profile-mod-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .profile-mod-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .profile-mod-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+  }
+
+  .profile-mod-tech {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-amber);
+    opacity: 0.85;
+  }
+
+  /* 2. App Store Live Installation Banner & Progress */
+  .installer-active-banner {
+    background: linear-gradient(135deg, rgba(20, 20, 28, 0.95), rgba(35, 28, 20, 0.95));
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    animation: slideDownFade 0.3s ease;
+  }
+
+  @keyframes slideDownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .active-install-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .active-install-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .install-progress-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .install-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
+    background-size: 200% 100%;
+    animation: shimmerProgress 2s linear infinite;
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  .install-progress-fill.success {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    animation: none;
+  }
+
+  .install-progress-fill.error {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+    animation: none;
+  }
+
+  @keyframes shimmerProgress {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .card-install-progress {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .card-install-track {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 5px;
+  }
+
+  .card-install-bar {
+    height: 100%;
+    background: var(--accent-amber);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  /* 3. Disk Cleanup Reclaim Box */
+  .storage-reclaim-box {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: 8px;
+    padding: 6px 14px;
+  }
+
+  /* 4. Network Summary Metric Grid & Badges */
+  .net-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .net-metric-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .net-metric-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .net-metric-value {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .net-service-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(0, 242, 254, 0.12);
+    color: #00f2fe;
+    border: 1px solid rgba(0, 242, 254, 0.25);
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+  }
+
+  .status-dot.listen {
+    background: #00f2fe;
+    box-shadow: 0 0 6px rgba(0, 242, 254, 0.7);
+  }
+
+  .status-dot.wait {
+    background: #f59e0b;
+  }
+
+  .status-dot.closed {
+    background: #71717a;
+  }
 }
-
-.profile-mods-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
-  border-color: rgba(245, 158, 11, 0.35);
-}
-
-.profile-mods-toggle .toggle-icon {
-  transition: transform 0.25s ease;
-}
-
-.profile-mods-toggle.open .toggle-icon {
-  transform: rotate(180deg);
-}
-
-.profile-mods-container {
-  display: none;
-  background: rgba(10, 10, 14, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 10px;
-  max-height: 280px;
-  overflow-y: auto;
-  margin-bottom: 14px;
-}
-
-.profile-mods-container.open {
-  display: block;
-  animation: fadeIn 0.2s ease;
-}
-
-.profile-mod-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  transition: background 0.15s ease;
-  border-radius: 4px;
-}
-
-.profile-mod-item:last-child {
-  border-bottom: none;
-}
-
-.profile-mod-item:hover {
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.profile-mod-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.profile-mod-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-.profile-mod-desc {
-  font-size: 11px;
-  color: var(--text-secondary);
-  line-height: 1.35;
-}
-
-.profile-mod-tech {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--accent-amber);
-  opacity: 0.85;
-}
-
-/* 2. App Store Live Installation Banner & Progress */
-.installer-active-banner {
-  background: linear-gradient(135deg, rgba(20, 20, 28, 0.95), rgba(35, 28, 20, 0.95));
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  border-radius: 12px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  animation: slideDownFade 0.3s ease;
-}
-
-@keyframes slideDownFade {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.active-install-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.active-install-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.install-progress-track {
-  width: 100%;
-  height: 8px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-}
-
-.install-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b);
-  background-size: 200% 100%;
-  animation: shimmerProgress 2s linear infinite;
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-
-.install-progress-fill.success {
-  background: linear-gradient(90deg, #10b981, #34d399);
-  animation: none;
-}
-
-.install-progress-fill.error {
-  background: linear-gradient(90deg, #ef4444, #f87171);
-  animation: none;
-}
-
-@keyframes shimmerProgress {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.card-install-progress {
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.card-install-track {
-  height: 5px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-bottom: 5px;
-}
-
-.card-install-bar {
-  height: 100%;
-  background: var(--accent-amber);
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-
-/* 3. Disk Cleanup Reclaim Box */
-.storage-reclaim-box {
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: 8px;
-  padding: 6px 14px;
-}
-
-/* 4. Network Summary Metric Grid & Badges */
-.net-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.net-metric-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.net-metric-label {
-  font-size: 11px;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.net-metric-value {
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 800;
-  color: #ffffff;
-}
-
-.net-service-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: rgba(0, 242, 254, 0.12);
-  color: #00f2fe;
-  border: 1px solid rgba(0, 242, 254, 0.25);
-  margin-left: 6px;
-  vertical-align: middle;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 6px;
-}
-
-.status-dot.active {
-  background: #10b981;
-  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
-}
-
-.status-dot.listen {
-  background: #00f2fe;
-  box-shadow: 0 0 6px rgba(0, 242, 254, 0.7);
-}
-
-.status-dot.wait {
-  background: #f59e0b;
-}
-
-.status-dot.closed {
-  background: #71717a;
-}
-
-.conn-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-family: var(--font-mono);
-}
-
-.conn-badge-inbound {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.25);
-}
-
-.conn-badge-outbound {
-  background: rgba(59, 130, 246, 0.12);
-  color: #60a5fa;
-  border: 1px solid rgba(59, 130, 246, 0.25);
-}
-
-.conn-badge-listen {
-  background: rgba(0, 242, 254, 0.12);
-  color: #00f2fe;
-  border: 1px solid rgba(0, 242, 254, 0.25);
-}
-
-.conn-badge-local {
-  background: rgba(168, 85, 247, 0.12);
-  color: #c084fc;
-  border: 1px solid rgba(168, 85, 247, 0.25);
-}
-
-
